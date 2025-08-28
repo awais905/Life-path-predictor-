@@ -577,6 +577,12 @@
             const dob = new Date(document.getElementById('dob').value);
             const city = document.getElementById('city').value;
             
+            // Validate inputs
+            if (!name || !fatherName || !dob || !city) {
+                alert("Please fill in all fields");
+                return;
+            }
+            
             // Show loading animation
             document.getElementById('loading').style.display = 'block';
             document.getElementById('result-section').style.display = 'none';
@@ -591,7 +597,7 @@
                 
                 // Scroll to results
                 document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
-            }, 3000);
+            }, 2000);
         });
         
         function generatePredictions(name, fatherName, dob, city) {
@@ -694,9 +700,51 @@
             return lifePathTexts[lifePathNumber] || `Dear ${name}, your unique Life Path number suggests a special destiny that is beyond conventional interpretation. Your journey will be extraordinary and unique.`;
         }
         
-        // Similar functions for Urdu and Saraiki would be implemented here
-        // For brevity, I'll include just one example for each language
+        function generatePersonalityText(zodiacSign, name) {
+            const personalityTexts = {
+                "Aries": `As an Aries, ${name}, you are courageous, energetic, and determined. Your fiery nature drives you to take initiative and pursue your goals with passion. You thrive on challenge and are a natural leader.`,
+                "Taurus": `As a Taurus, ${name}, you are reliable, practical, and sensual. You value stability and enjoy life's pleasures. Your patient nature helps you build lasting foundations in all areas of life.`,
+                "Gemini": `As a Gemini, ${name}, you are adaptable, communicative, and intellectually curious. You have a dual nature that allows you to see multiple perspectives. Your quick wit and charm serve you well.`,
+                "Cancer": `As a Cancer, ${name}, you are intuitive, emotional, and nurturing. You have a strong connection to home and family. Your protective nature makes you a loyal friend and partner.`,
+                "Leo": `As a Leo, ${name}, you are generous, warm-hearted, and creative. You have a natural flair for drama and love being in the spotlight. Your confidence inspires others to follow your lead.`,
+                "Virgo": `As a Virgo, ${name}, you are analytical, practical, and detail-oriented. You have a keen eye for perfection and enjoy helping others. Your modesty belies your sharp intelligence.`,
+                "Libra": `As a Libra, ${name}, you are diplomatic, romantic, and sociable. You have a strong sense of justice and beauty. Your charming nature helps you create harmony in your relationships.`,
+                "Scorpio": `As a Scorpio, ${name}, you are passionate, determined, and intuitive. You have a mysterious aura that draws others to you. Your transformative nature helps you reinvent yourself throughout life.`,
+                "Sagittarius": `As a Sagittarius, ${name}, you are optimistic, freedom-loving, and humorous. You have a philosophical mind and love exploring new horizons. Your honesty is both refreshing and inspiring.`,
+                "Capricorn": `As a Capricorn, ${name}, you are responsible, disciplined, and wise. You have a strong sense of duty and ambition. Your patient approach ensures long-term success in your endeavors.`,
+                "Aquarius": `As an Aquarius, ${name}, you are progressive, original, and humanitarian. You march to the beat of your own drum and value intellectual stimulation. Your innovative ideas are often ahead of their time.`,
+                "Pisces": `As a Pisces, ${name}, you are compassionate, artistic, and intuitive. You have a deep connection to the spiritual realm and great empathy for others. Your creative talents are a gift to the world.`
+            };
+            
+            return personalityTexts[zodiacSign] || `${name}, your zodiac sign suggests a unique personality blend that allows you to adapt to various situations with grace and wisdom.`;
+        }
         
+        function generateFutureText(city, lifePathNumber, dob) {
+            const age = new Date().getFullYear() - dob.getFullYear();
+            const futureAges = [age + 1, age + 3, age + 5, age + 10];
+            const cities = [city, "London", "Dubai", "Tokyo", "New York", "Paris"];
+            const careers = ["technology", "creative arts", "business", "healthcare", "education", "entrepreneurship"];
+            const events = ["a significant career opportunity", "a meaningful relationship", "a financial windfall", "a spiritual awakening", "a transformative journey"];
+            
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            const randomCareer = careers[Math.floor(Math.random() * careers.length)];
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            
+            return `Your future holds remarkable experiences. Around age ${futureAges[0]}, you will encounter ${randomEvent} that will change your perspective. By ${futureAges[2]}, you will find success in ${randomCareer}, possibly in ${randomCity}. A major life transition around ${futureAges[3]} will lead you to your true purpose. Trust the journey, even when the path isn't clear.`;
+        }
+        
+        function generateLuckyText(name, dob, lifePathNumber) {
+            const luckyNumbers = [lifePathNumber, dob.getDate(), 7, 21, 33];
+            const colors = ["sapphire blue", "emerald green", "royal purple", "gold", "ruby red"];
+            const days = ["Monday", "Wednesday", "Friday", "Sunday"];
+            
+            const luckyColor = colors[Math.floor(Math.random() * colors.length)];
+            const luckyDay = days[Math.floor(Math.random() * days.length)];
+            
+            return `Your lucky numbers are: ${luckyNumbers[0]}, ${luckyNumbers[1]}, and ${luckyNumbers[2]}. Your aura resonates with ${luckyColor}, so incorporate this color into your life. ${luckyDay} is your most favorable day of the week for important decisions. The universe is aligning to support your dreams, ${name}.`;
+        }
+        
+        // Placeholder functions for Urdu and Saraiki predictions
         function generateLifePathTextUR(name, lifePathNumber) {
             return `عزیز ${name}, آپ کی زندگی کا راستہ نمبر ${lifePathNumber} ہے۔ آپ کی قسمت میں بڑی کامیابیاں ہیں اور آپ ایک روشن مستقبل کے حامل ہیں۔ آپ کی قیادت کی صلاحیتیں آپ کو کامیابی کی طرف لے جائیں گی۔`;
         }
@@ -705,17 +753,32 @@
             return `پیارے ${name}, تہاݙا زندگی دا رستہ نمبر ${lifePathNumber} ہے۔ تہاݙی قسمت وچ وݙیاں کامیابیاں ہن اور تہاݙا مستقبل چمکدا ہویا ہے۔ تہاݙی قیادت دی صلاحیت تہاکوں کامیابی تے گھن ویسی۔`;
         }
         
-        // Placeholder functions for other prediction types in different languages
-        function generatePersonalityText(zodiacSign, name) {
-            return `As a ${zodiacSign}, ${name}, you have a dynamic personality that attracts others to you. Your natural charm and determination will help you overcome any obstacles in your path.`;
-        }
-        
         function generatePersonalityTextUR(zodiacSign, name) {
-            return `ایک ${zodiacSign} کے طور پر، ${name}, آپ کی شخصیت متحرک ہے جو دوسروں کو اپنی طرف متوجہ کرتی ہے۔ آپ کی天然 charm اور determination آپ کو اپنے راستے میں آنے والی رکاوٹوں پر قابو پانے میں مدد دے گی۔`;
+            return `ایک ${zodiacSign} کے طور پر، ${name}, آپ کی شخصیت متحرک ہے جو دوسروں کو اپنی طرف متوجہ کرتی ہے۔ آپ کی طبیعی دلکشی اور عزم آپ کو اپنے راستے میں آنے والی رکاوٹوں پر قابو پانے میں مدد دے گی۔`;
         }
         
         function generatePersonalityTextSR(zodiacSign, name) {
             return `ہک ${zodiacSign} دے طور تے، ${name}, تہاݙی شخصیت متحرک ہے جو ݙوجھے لوکاں کوں اپݨے ول کھچدی ہے۔ تہاݙی فطری charm تے determination تہاکوں اپݨے رستے وچ آن والیاں رکاوٹاں تے قابو پاوݨ وچ مدد ݙیسی۔`;
+        }
+        
+        function generateFutureTextUR(city, lifePathNumber, dob) {
+            const age = new Date().getFullYear() - dob.getFullYear();
+            return `آپ کے مستقبل میں قابل ذکر تجربات ہیں۔ ${age + 2} سال کی عمر کے قریب، آپ کو ایک اہم موقع ملے گا جو آپ کے نقطہ نظر کو بدل دے گا۔ ${age + 5} سال کی عمر تک، آپ کو شہرت اور کامیابی ملے گی۔ ${age + 10} سال کی عمر میں ایک بڑی زندگی کی تبدیلی آپ کو آپ کے حقیقی مقصد کی طرف لے جائے گی۔`;
+        }
+        
+        function generateFutureTextSR(city, lifePathNumber, dob) {
+            const age = new Date().getFullYear() - dob.getFullYear();
+            return `تہاݙے مستقبل وچ قابل ذکر تجربات ہن۔ ${age + 2} سال دی عمر دے قریب، تہاکوں ہک وݙا موقع ملسی جو تہاݙے نقطہ نظر کوں بدل ݙیسی۔ ${age + 5} سال دی عمر تائیں، تہاکوں شہرت تے کامیابی ملسی۔ ${age + 10} سال دی عمر وچ ہک وݙی زندگی دی تبدیلی تہاکوں تہاݙے حقیقی مقصد دی طرف گھن ویسی۔`;
+        }
+        
+        function generateLuckyTextUR(name, dob, lifePathNumber) {
+            const luckyNumbers = [lifePathNumber, dob.getDate(), 7, 21, 33];
+            return `آپ کے خوش قسمت نمبر ہیں: ${luckyNumbers[0]}, ${luckyNumbers[1]}, اور ${luckyNumbers[2]}۔ آپ کی توانائی نیلے رنگ کے ساتھ گونجتی ہے، اس لیے اس رنگ کو اپنی زندگی میں شامل کریں۔ جمعرات ہفتے کا سب سے سازگار دن ہے اہم فیصلوں کے لیے۔ کائنات آپ کے خوابوں کی حمایت کے لیے ترتیب دے رہی ہے، ${name}۔`;
+        }
+        
+        function generateLuckyTextSR(name, dob, lifePathNumber) {
+            const luckyNumbers = [lifePathNumber, dob.getDate(), 7, 21, 33];
+            return `تہاݙے خوش قسمت نمبر ہن: ${luckyNumbers[0]}, ${luckyNumbers[1]}, تے ${luckyNumbers[2]}۔ تہاݙی انرژی نیلے رنگ نال گونجدی ہے، ایں سانگے ایہ رنگ اپݨی زندگی وچ شامل کرو۔ جمعرات ہفتے دا سبھ توں سازگار ݙینہہ ہے وݙے فیصلے کیتے۔ کائنات تہاݙے خوابیں دی حمایت کیتے ترتیب دےندی پئی ہے، ${name}۔`;
         }
         
         function shareResults() {
