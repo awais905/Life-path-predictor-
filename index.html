@@ -1,172 +1,499 @@
-<!DOCTYPE html>
+<!--
+  South Punjab Life Predictor
+  Single-file deployment: index.html
+  - Built with Bootstrap 5 (CDN), Font Awesome, Chart.js (CDN)
+  - Inline CSS & JS for easy GitHub Pages deployment
+  - Multilingual (en, ur, sr), RTL handling for Urdu/Saraiki
+  - Local storage profile/history, PDF export, share buttons
+  - Accessibility: ARIA labels, alt text, keyboard-focusable elements
+  - Author: Created by BHuTTa
+  ------------------------------------------------------------------
+  Instructions:
+  1) Save this content as `index.html` and push to GitHub Pages (or open locally).
+  2) Works offline after initial load of CDN assets (optional: host assets locally).
+  3) For production, consider minifying CSS/JS and hosting fonts locally for best performance.
+--><!doctype html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Future Prediction App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #1e3c72, #2a5298);
-      color: white;
-      text-align: center;
-      padding: 20px;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>South Punjab Life Predictor</title>  <!-- Google Fonts -->  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">  <!-- Bootstrap 5 (CDN) -->  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Chart.js (only used for timeline small chart) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>  <meta name="description" content="South Punjab Life Predictor — numerology & cultural-inspired readings. For entertainment only.">  <style>
+    :root{
+      --dark-red:#8B0000; --dark-red-2:#4B0000; --gold:#FFD700; --white:#FFFFFF; --muted:#2F2F2F;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px; --max-width:980px;
     }
-    h1 {
-      margin-bottom: 20px;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      margin: 15px auto;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    }
-    input {
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      width: 90%;
-    }
-    button {
-      background: #ff9800;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #e68900;
-    }
-    .result {
-      margin-top: 15px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,var(--dark-red),var(--dark-red-2));color:var(--white);}
+    /* Navbar */
+    .navbar-brand{font-family:'Playfair Display', serif;font-weight:700}
+    .logo-circle{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#f0b000);display:inline-flex;align-items:center;justify-content:center;color:#3a1f00}
+    .container-main{max-width:var(--max-width);margin:28px auto;padding:12px}
 
-  <h1>🔮 Future Prediction App</h1>
+    /* Card styles */
+    .card-pulse{background:linear-gradient(180deg,rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:var(--radius);border:1px solid rgba(0,0,0,0.25);box-shadow:0 8px 30px rgba(0,0,0,0.35)}
+    .form-card{padding:18px}
+    label{font-weight:600;color:var(--gold)}
 
-  <!-- Love Calculator -->
-  <div class="card">
-    <h2>❤️ Love Calculator</h2>
-    <input type="text" id="loveName1" placeholder="Enter your name">
-    <input type="text" id="loveName2" placeholder="Enter partner name">
-    <button onclick="loveCalculator()">Calculate Love %</button>
-    <div class="result" id="loveResult"></div>
+    /* Buttons */
+    .btn-premium{background:linear-gradient(180deg,var(--dark-red),var(--dark-red-2));border:2px solid var(--gold);color:var(--white);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+    .btn-premium:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.6)}
+
+    /* Results */
+    .results-area{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(47,47,47,0.06), rgba(0,0,0,0.08));}
+    .result-card{background:linear-gradient(180deg, rgba(255,215,0,0.02), rgba(0,0,0,0.04));border-left:4px solid var(--gold);padding:14px;margin-bottom:12px;border-radius:10px;transition:transform .28s ease,box-shadow .28s ease}
+    .result-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,0.5)}
+    .result-title{font-weight:700;color:var(--gold);display:flex;align-items:center;gap:10px}
+    .muted{color:#cfcfcf}
+
+    /* Life Path strength bar */
+    .strength-bar{height:12px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden}
+    .strength-fill{height:100%;background:linear-gradient(90deg,var(--gold),#ffd86b);width:0%;transition:width 900ms ease-in-out}
+
+    /* Spinner / Mystic orb */
+    .orb{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,215,0,0.95), rgba(255,215,0,0.6) 20%, rgba(139,0,0,0.15) 40%, transparent 60%);box-shadow:0 0 30px rgba(255,215,0,0.12);animation:orb-spin 1.8s linear infinite}
+    @keyframes orb-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+    /* Shimmer for signature */
+    .signature{color:var(--gold);font-weight:800;text-align:center;padding:10px;font-family:'Playfair Display', serif}
+    .signature .shimmer{display:inline-block;background:linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.6), rgba(255,255,255,0.1));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 2.8s linear infinite}
+    @keyframes shimmer{0%{background-position:0% 0%}100%{background-position:200% 0%}}
+
+    /* Modal history styling */
+    .modal-content{background:linear-gradient(180deg,#0f0b0b, #1a0f0f);border-radius:12px;color:var(--white)}
+
+    /* Responsive tweaks */
+    @media(max-width:800px){.container-main{padding:10px}.card-pulse{padding:12px}}
+
+    /* Accessibility focus */
+    button:focus, a:focus, input:focus{outline:3px solid rgba(255,215,0,0.12);outline-offset:3px}
+  </style></head>
+<body>  <!-- NAVBAR -->  <nav class="navbar navbar-expand-lg navbar-dark" style="background:linear-gradient(90deg,var(--dark-red),var(--dark-red-2));position:sticky;top:0;z-index:1000;box-shadow:0 6px 18px rgba(0,0,0,.5)">
+    <div class="container-fluid">
+      <a class="navbar-brand ms-3" href="#"> 
+        <span class="logo-circle" aria-hidden="true"><i class="fa-solid fa-moon"></i></span>
+        <span class="ms-2">South Punjab Life Predictor</span>
+      </a><div class="d-flex align-items-center me-3">
+    <div class="dropdown me-2">
+      <button class="btn btn-sm btn-transparent text-white dropdown-toggle" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">English</button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+        <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
+        <li><a class="dropdown-item lang-option" href="#" data-lang="ur">اردو</a></li>
+        <li><a class="dropdown-item lang-option" href="#" data-lang="sr">سرائیکی</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+  </nav>  <main class="container-main">
+    <!-- DISCLAIMER modal (shown on first load) -->
+    <div class="modal fade" id="disclaimerModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">Disclaimer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">This tool is for entertainment only. Readings are inspired by traditional Ilm‑e‑Najoom and numerology, not scientific advice. Continue responsibly.</div>
+          <div class="modal-footer border-0">
+            <button class="btn btn-sm btn-premium" data-bs-dismiss="modal">I Understand</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- FORM CARD -->
+<div class="card-pulse form-card"> 
+  <form id="predictForm" autocomplete="off" novalidate>
+    <div class="row g-2">
+      <div class="col-12 col-md-6">
+        <label for="fullName">Full Name</label>
+        <input id="fullName" name="fullName" class="form-control" aria-label="Full Name" placeholder="e.g., Muhammad Ali" required>
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="fatherName">Father's Name</label>
+        <input id="fatherName" name="fatherName" class="form-control" aria-label="Father's Name" placeholder="e.g., Ahmed Khan" required>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <label for="dob">Date of Birth</label>
+        <input id="dob" name="dob" type="date" class="form-control" aria-label="Date of Birth" required>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="city">City</label>
+        <select id="city" name="city" class="form-select" aria-label="City">
+          <option value="">-- Select City --</option>
+          <option value="Multan">Multan</option>
+          <option value="Bahawalpur">Bahawalpur</option>
+          <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
+          <option value="Rahim Yar Khan">Rahim Yar Khan</option>
+          <option value="Muzaffargarh">Muzaffargarh</option>
+          <option value="Other">Other (type below)</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="cityOther">City (Other)</label>
+        <input id="cityOther" name="cityOther" class="form-control" placeholder="If not listed" aria-label="City Other">
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender" class="form-select" aria-label="Gender">
+          <option value="">Prefer not to say</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="focus">Focus (optional)</label>
+        <input id="focus" name="focus" class="form-control" placeholder="career, marriage, health...">
+      </div>
+
+      <div class="col-12 d-flex gap-2 align-items-center mt-3">
+        <button type="submit" class="btn btn-premium me-2" id="predictBtn"><i class="fa-solid fa-star"></i> Predict My Future</button>
+        <button type="button" class="btn btn-outline-light" id="saveProfileBtn" title="Save profile locally"><i class="fa-solid fa-bookmark"></i> Save Profile</button>
+        <div class="ms-auto d-flex gap-2">
+          <button type="button" class="btn btn-sm btn-light" id="shareWhats"><i class="fa-brands fa-whatsapp"></i></button>
+          <button type="button" class="btn btn-sm btn-light" id="shareFB"><i class="fa-brands fa-facebook"></i></button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Loading / Orb -->
+<div id="loading" class="d-none text-center mt-3">
+  <div class="orb mx-auto" role="status" aria-hidden="true"></div>
+  <div class="muted mt-2">Consulting the stars...</div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsWrapper" class="results-area d-none" aria-live="polite">
+  <!-- Life Path strength -->
+  <div class="result-card">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <div class="result-title"><i class="fa-solid fa-compass"></i> Life Path Strength</div>
+        <div class="muted small">A quick measure of your current life energy</div>
+      </div>
+      <div style="width:40%">
+        <div class="strength-bar"><div id="strengthFill" class="strength-fill" style="width:0%"></div></div>
+        <div class="small muted mt-1" id="strengthLabel">—</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Friendship Calculator -->
-  <div class="card">
-    <h2>🤝 Friendship Calculator</h2>
-    <input type="text" id="friendName1" placeholder="Enter your name">
-    <input type="text" id="friendName2" placeholder="Enter friend name">
-    <button onclick="friendshipCalculator()">Check Friendship</button>
-    <div class="result" id="friendResult"></div>
+  <!-- Detailed sections (cards) -->
+  <div id="detailedSections"></div>
+
+  <!-- Timeline chart -->
+  <div class="result-card">
+    <div class="result-title"><i class="fa-solid fa-chart-line"></i> Key Timeline</div>
+    <canvas id="timelineChart" height="80" aria-label="Timeline chart"></canvas>
   </div>
 
-  <!-- Career Prediction -->
-  <div class="card">
-    <h2>💼 Career Prediction</h2>
-    <input type="text" id="careerName" placeholder="Enter your name">
-    <button onclick="careerPrediction()">Predict Career</button>
-    <div class="result" id="careerResult"></div>
+  <div class="d-flex gap-2 mt-2">
+    <button class="btn btn-premium" id="downloadAllBtn"><i class="fa-solid fa-file-download"></i> Download PDF</button>
+    <button class="btn btn-outline-light" id="copyBtn"><i class="fa-solid fa-copy"></i> Copy Report</button>
+    <button class="btn btn-outline-light" id="historyOpenBtn"><i class="fa-solid fa-clock-rotate-left"></i> View History</button>
   </div>
 
-  <!-- Future Fortune -->
-  <div class="card">
-    <h2>🌟 Future Fortune</h2>
-    <input type="text" id="fortuneName" placeholder="Enter your name">
-    <button onclick="futureFortune()">See Fortune</button>
-    <div class="result" id="fortuneResult"></div>
-  </div>
+</div>
 
-  <script>
-    // Love Calculator
-    function loveCalculator() {
-      let name1 = document.getElementById("loveName1").value;
-      let name2 = document.getElementById("loveName2").value;
-      if (name1 === "" || name2 === "") {
-        document.getElementById("loveResult").innerText = "⚠️ Please enter both names!";
-        return;
-      }
-      let percentage = Math.floor(Math.random() * 101);
-      let lines = [
-        "🔥 A match made in heaven!",
-        "💔 Might face ups and downs, but love wins!",
-        "🌹 A sweet bond full of romance.",
-        "⚡ Strong attraction, keep the spark alive!",
-        "🌈 Destiny is on your side!"
-      ];
-      let randomLine = lines[Math.floor(Math.random() * lines.length)];
-      document.getElementById("loveResult").innerText = `${name1} ❤️ ${name2} = ${percentage}%\n${randomLine}`;
+<div class="signature mt-4"> <span class="shimmer">✨ Created by BHuTTa ✨</span></div>
+
+<footer class="mt-4 muted small text-center">© 2025 - For Entertainment Only • Hosted on GitHub Pages</footer>
+
+  </main>  <!-- History Modal -->  <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content p-3">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Saved Readings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2"><input id="histSearch" class="form-control" placeholder="Search by name or DOB" aria-label="Search history"></div>
+          <div id="historyList" style="max-height:50vh;overflow:auto"></div>
+        </div>
+        <div class="modal-footer border-0">
+          <button id="clearHistoryBtn" class="btn btn-danger">Clear History</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>  <!-- Bootstrap JS (popper included) -->  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>  <!-- jsPDF + html2canvas for PDF export -->  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  <script>
+  /* ======= Translations (EN / UR / SR) ======= */
+  const translations = {
+    en: {
+      title:'South Punjab Life Predictor', predictBtn:'Predict My Future', disclaimer:'This tool is for entertainment only. Readings inspired by Ilm-e-Najoom & numerology.',
+      sections:{personality:'Personality Insights',career:'Career Forecast',love:'Love & Marriage',health:'Health & Wealth',challenges:'Challenges & Remedies',timeline:'Timeline of Key Events'},
+      saveOK:'Profile saved locally', noData:'No saved readings'
+    },
+    ur: {
+      title:'ساﺅتھ پنجاب لائف پیشن گوئی', predictBtn:'میری زندگی بتائیں', disclaimer:'یہ آلہ تفریح کے لئے ہے۔ روایتی علم نجوم اور عددیات سے متاثرہ نتائج ہیں۔',
+      sections:{personality:'شخصی جانکاری',career:'پیشہ وارانہ پیشن گوئی',love:'محبت اور نکاح',health:'صحت و دولت',challenges:'چیلنجز اور علاج',timeline:'اہم وقتی اَوراق'},
+      saveOK:'پروفائل محفوظ ہوگیا', noData:'کوئی محفوظ شدہ قرات نہیں'
+    },
+    sr: {
+      title:'ساؤتھ پنجاب زندگی دی پیشن گوئی', predictBtn:'میری زندگی دسو', disclaimer:'ایہ صرف تفریح لئی اے؛ روایتی نجوم تے عددیات توں متاثر۔',
+      sections:{personality:'شخصی حال',career:'روزگار دی پیشن گوئی',love:'محبت تے شادی',health:'صحت تے دولت',challenges:'مشکلات تے علاج',timeline:'اہم واقعات'},
+      saveOK:'پروفائل محفوظ ہو گیا', noData:'کوئی محفوظ ریکارڈ نئیں'
     }
+  };
 
-    // Friendship Calculator
-    function friendshipCalculator() {
-      let name1 = document.getElementById("friendName1").value;
-      let name2 = document.getElementById("friendName2").value;
-      if (name1 === "" || name2 === "") {
-        document.getElementById("friendResult").innerText = "⚠️ Please enter both names!";
-        return;
-      }
-      let percentage = Math.floor(Math.random() * 101);
-      let lines = [
-        "🤗 Best friends forever!",
-        "😂 You two share lots of laughs.",
-        "💪 A strong and supportive bond.",
-        "🌍 Distance doesn’t matter in this friendship.",
-        "⚡ Friendship full of energy!"
-      ];
-      let randomLine = lines[Math.floor(Math.random() * lines.length)];
-      document.getElementById("friendResult").innerText = `${name1} 🤝 ${name2} = ${percentage}%\n${randomLine}`;
-    }
+  // Simple city coordinates (approx) for simulated planetary influence
+  const CITY_COORDS = {
+    'Multan': {lat:30.1978, lon:71.4695},
+    'Bahawalpur': {lat:29.3956, lon:71.6830},
+    'Dera Ghazi Khan': {lat:30.0561, lon:70.6356},
+    'Rahim Yar Khan': {lat:28.4214, lon:70.2988},
+    'Muzaffargarh': {lat:30.0700, lon:71.1920}
+  };
 
-    // Career Prediction
-    function careerPrediction() {
-      let name = document.getElementById("careerName").value;
-      if (name === "") {
-        document.getElementById("careerResult").innerText = "⚠️ Please enter your name!";
-        return;
-      }
-      let careers = [
-        "💼 Successful Businessperson",
-        "🎤 Famous Singer",
-        "🎬 Popular Actor",
-        "👨‍💻 Software Engineer",
-        "🌍 World Traveler",
-        "📚 Great Teacher",
-        "🏥 Doctor helping many lives"
-      ];
-      let randomCareer = careers[Math.floor(Math.random() * careers.length)];
-      document.getElementById("careerResult").innerText = `${name}, your career path is: ${randomCareer}`;
-    }
+  // ===== Helper: sanitize text (basic) =====
+  function esc(str){const s = String(str||''); return s.replace(/[&<>"'`]/g, ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;','`':'&#96;' }[ch]));}
 
-    // Future Fortune
-    function futureFortune() {
-      let name = document.getElementById("fortuneName").value;
-      if (name === "") {
-        document.getElementById("fortuneResult").innerText = "⚠️ Please enter your name!";
-        return;
-      }
-      let fortunes = [
-        "🌟 You will achieve great success soon.",
-        "💖 A new relationship will bring happiness.",
-        "💰 Financial growth is on the way.",
-        "✈️ A surprise journey is waiting for you.",
-        "🏆 You will be recognized for your hard work."
-      ];
-      let randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-      document.getElementById("fortuneResult").innerText = `${name}, your fortune: ${randomFortune}`;
-    }
-  </script>
+  // ===== Simple numerology: name -> number =====
+  const letterMap = (function(){const m={};const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ'; for(let i=0;i<letters.length;i++){ m[letters[i]] = (i%9)+1;} return m;})();
+  function nameNumber(name){ if(!name) return 0; const s = name.toUpperCase().replace(/[^A-Z]/g,''); let sum=0; for(const ch of s) sum += letterMap[ch]||0; // reduce
+    while(sum>9 && ![11,22,33].includes(sum)){ let t=0; String(sum).split('').forEach(d=>t+=Number(d)); sum=t;} return sum; }
 
-</body>
+  // ===== Simple Ilm-e-Najoom simulation: uses DOB + city coords to generate 'planet index' =====
+  function planetIndex(dob, city){ // dob ISO YYYY-MM-DD
+    try{
+      const date = new Date(dob);
+      const seed = date.getFullYear() + date.getMonth()+1 + date.getDate();
+      const coords = CITY_COORDS[city] || {lat:0, lon:0};
+      const idx = Math.abs(Math.floor((seed + Math.round(coords.lat) + Math.round(coords.lon)) % 9)) + 1; // 1..9
+      return idx;
+    }catch(e){return 5;}
+  }
+
+  // ===== Build a richly worded reading per language =====
+  function buildReport({fullName,fatherName,dob,city,gender,focus}, lang='en'){
+    // input sanitation already
+    const L = translations[lang] || translations.en;
+    const nameNum = nameNumber(fullName);
+    const lifePath = nameNumber(dob.replace(/[^0-9]/g,'')) || nameNumber(fullName);
+    const pIndex = planetIndex(dob, city);
+
+    // dynamic text pools (short list — extendable)
+    const personalityPool = {
+      en:[
+        `A deep soul with quiet determination. Your name number ${nameNum} shows creative potential and steady will.`,
+        `You reflect wisdom and resilience. Your surroundings shape a patient, perceptive nature.`
+      ],
+      ur:[`آپ کا اندرونی مزاج پختہ ہے، نام کا نمبر ${nameNum} تخلیقی صلاحیت بتاتا ہے۔`,`آپ کی فطرت بردبار اور غور وفکر والی ہے۔`],
+      sr:[`تہاڈی روح مضبوط اے، ناں دا نمبر ${nameNum} تخلیقیت دسدے اے۔`,`تسی سوچ وچار والے او؛ تحمل تہاڈی شان اے۔`]
+    };
+
+    const careerPool = {
+      en:[`This cycle favors leadership and steady advancement. Consider skill-building this year.`,`Public roles, service, or entrepreneurship may bring recognition.`],
+      ur:[`اس دور میں قیادت اور ترقی کے مواقع ہیں۔ ہنر بڑھائیں۔`,`عوامی خدمات یا کاروبار سے پہچان مل سکتی ہے۔`],
+      sr:[`ایہہ وقت قیادت تے ترقی لئی موزوں اے۔ ہنر ودھاؤ۔`,`عوامی یا کاروباری کم توانو پہچان لا سکدے نیں۔`]
+    };
+
+    const lovePool = {
+      en:[`Relationships soften challenges; honest communication will deepen bonds.`,`Marriage prospects look stable in a few seasons; respect traditions and mutual care.`],
+      ur:[`رشتے مشکلات کو نرم کرتے ہیں؛ کھلے دل سے بات کریں۔`,`کچھ عرصے میں شادی کے موقع روشن ہیں، روایات کا احترام کریں۔`],
+      sr:[`رشتے مسائل نوں نرم کردے نیں؛ صاف گل کرو۔`,`کجھ وکھرے موسم وچ شادی دیاں آسکا ں نیں۔`] 
+    };
+
+    const healthPool = {
+      en:[`Focus on routine and simple daily practices—walk, proper rest, and hydration.`,`Avoid extremes; balance and moderation will keep you strong.`],
+      ur:[`روزمرہ کی عادات پر توجہ دیں—سیر، مناسب آرام اور پانی۔`,`حد سے زیادہ سے گریز کریں؛ اعتدال بہتر رکھیں۔`],
+      sr:[`روزانہ معمول تے عمل رکھو—سیر تے آرام ضروری اے۔`,`زیادہ نہ کرو؛ توازن رکھو۔`] 
+    };
+
+    const challengesPool = {
+      en:[`Temptation to rush decisions may arise; consult elders and trusted friends.`,`Short-term obstacles are learning points; dua and steady work dissolve them.`],
+      ur:[`فیصلے جلدی میں نہ کریں؛ بزرگوں سے رہنمائی لیں۔`,`مختصر مشکلات سیکھنے کے مواقع ہیں؛ دعا اور محنت مفید ہیں۔`],
+      sr:[`فوری فیصلے توں بچو؛ تجربہ لوڑ اے۔`,`چھوٹے مسائل سبق ہوندے نیں؛ دعا تے محنت نال حل ہونگے۔`] 
+    };
+
+    // Pick random items from pools for variety
+    function pick(pool){ const arr = (pool[lang]||pool.en)||[]; return arr[Math.floor(Math.random()*arr.length)]; }
+
+    const personality = pick(personalityPool);
+    const career = pick(careerPool);
+    const love = pick(lovePool);
+    const health = pick(healthPool);
+    const challenges = pick(challengesPool);
+
+    // Life path strength derived from nameNum + planet index
+    const strength = Math.min(100, Math.max(20, Math.round((nameNum*8 + pIndex*6) % 100)));
+
+    // Timeline: 5 key future years with scores
+    const baseYear = (new Date(dob)).getFullYear() || new Date().getFullYear();
+    const timeline = Array.from({length:5}).map((_,i)=>({year: baseYear + (i+1), score: Math.min(100, Math.max(10, Math.round((strength + (i*7) + Math.random()*30) % 100)))}));
+
+    // Remedies culturally respectful
+    const remedies = {
+      en: `Simple remedies: regular dua, morning reflection, charity (sadaqah) and keeping a humble daily practice are suggested. Consider a mentor or elder for guidance.`,
+      ur: `عملی اقدامات: روزانہ دعا، صبحانہ سوچ، صدقہ اور عاجزی۔ بزرگوں سے رہنمائی مفید ہے۔`,
+      sr: `عملی ہدایات: روزانہ دعا، صدقہ، تے اک بزرگ کولوں مشورہ لو۔`
+    };
+
+    // Build report object
+    return {
+      lang, fullName, fatherName, dob, city, gender, focus,
+      lifePath, nameNum, planetIndex: pIndex, strength, personality, career, love, health, challenges, remedies: remedies[lang||'en'], timeline
+    };
+  }
+
+  // ===== Rendering & UI logic =====
+  const form = document.getElementById('predictForm');
+  const loadingEl = document.getElementById('loading');
+  const resultsWrapper = document.getElementById('resultsWrapper');
+  const detailedSections = document.getElementById('detailedSections');
+  const strengthFill = document.getElementById('strengthFill');
+  const strengthLabel = document.getElementById('strengthLabel');
+  const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+  let timelineChart = null;
+
+  // History storage key
+  const STORAGE_KEY = 'splp_history_v1';
+  let HISTORY = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  // Show disclaimer once
+  const disclaimerModal = new bootstrap.Modal(document.getElementById('disclaimerModal'));
+  if(!localStorage.getItem('splp_seen_disclaimer')){ disclaimerModal.show(); localStorage.setItem('splp_seen_disclaimer','1'); }
+
+  // Language switching
+  document.querySelectorAll('.lang-option').forEach(el=> el.addEventListener('click', (e)=>{
+    e.preventDefault(); const code = el.dataset.lang; applyLanguage(code);
+  }));
+
+  function applyLanguage(code){
+    const L = translations[code]||translations.en;
+    document.querySelector('.navbar-brand .ms-2').textContent = L.title || translations.en.title;
+    document.getElementById('predictBtn').textContent = L.predictBtn || translations.en.predictBtn;
+    // accessibility: page direction
+    if(code === 'ur' || code === 'sr'){ document.documentElement.dir = 'rtl'; document.body.dir='rtl'; } else{ document.documentElement.dir='ltr'; document.body.dir='ltr'; }
+    // change placeholders and labels
+    document.querySelectorAll('label').forEach(lbl=>{ /* keep labels in English for simplicity or localize further */ });
+  }
+
+  // sanitize and read form
+  function readForm(){
+    const fullName = esc(document.getElementById('fullName').value.trim());
+    const fatherName = esc(document.getElementById('fatherName').value.trim());
+    const dob = document.getElementById('dob').value;
+    let city = document.getElementById('city').value;
+    const cityOther = document.getElementById('cityOther').value.trim();
+    if(city === 'Other' && cityOther) city = esc(cityOther);
+    const gender = document.getElementById('gender').value;
+    const focus = esc(document.getElementById('focus').value.trim());
+    return {fullName,fatherName,dob,city,gender,focus};
+  }
+
+  // Submit handler
+  form.addEventListener('submit', async (ev)=>{
+    ev.preventDefault();
+    const payload = readForm();
+    if(!payload.fullName || !payload.fatherName || !payload.dob){ alert('Please complete Name, Father and DOB'); return; }
+    // show loading
+    loadingEl.classList.remove('d-none'); resultsWrapper.classList.add('d-none');
+    await new Promise(r=>setTimeout(r,700 + Math.random()*800)); // simulate compute
+
+    // build report (current language)
+    const lang = document.getElementById('langDropdown').textContent.includes('اردو') ? 'ur' : (document.getElementById('langDropdown').textContent.includes('سرائیکی') ? 'sr' : 'en');
+    const report = buildReport(payload, lang);
+    renderReport(report);
+    saveToHistory(report);
+    loadingEl.classList.add('d-none');
+  });
+
+  // Render report
+  function renderReport(r){
+    resultsWrapper.classList.remove('d-none');
+    // Life path
+    strengthFill.style.width = '0%';
+    setTimeout(()=>{ strengthFill.style.width = r.strength + '%'; strengthLabel.textContent = r.strength + '%'; }, 80);
+
+    // Sections
+    detailedSections.innerHTML = '';
+    const makeCard = (title, icon, html)=>{
+      const div = document.createElement('div'); div.className='result-card';
+      div.innerHTML = `<div class='result-title'><i class='fa-solid ${icon}'></i> ${esc(title)}</div><div class='mt-2'>${html}</div>`;
+      return div;
+    };
+
+    const L = translations[r.lang]||translations.en;
+
+    detailedSections.appendChild(makeCard(L.sections.personality || 'Personality Insights','fa-user', `<p class='muted'>${esc(r.personality)}</p>`));
+    detailedSections.appendChild(makeCard(L.sections.career || 'Career Forecast','fa-briefcase', `<p class='muted'>${esc(r.career)}</p>`));
+    detailedSections.appendChild(makeCard(L.sections.love || 'Love & Marriage','fa-heart', `<p class='muted'>${esc(r.love)}</p>`));
+    detailedSections.appendChild(makeCard(L.sections.health || 'Health & Wealth','fa-heart-pulse', `<p class='muted'>${esc(r.health)}</p>`));
+    detailedSections.appendChild(makeCard(L.sections.challenges || 'Challenges & Remedies','fa-shield-halved', `<p class='muted'>${esc(r.challenges)}</p><p style="margin-top:6px;color:#ffd">${esc(r.remedies)}</p>`));
+
+    // Timeline Chart
+    const years = r.timeline.map(t=>String(t.year)); const scores = r.timeline.map(t=>t.score);
+    if(timelineChart) timelineChart.destroy();
+    timelineChart = new Chart(timelineCtx, {type:'bar', data:{labels:years,datasets:[{label:L.sections.timeline || 'Timeline',data:scores,backgroundColor:'rgba(255,215,0,0.9)'}]}, options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100}}}});
+  }
+
+  // Save reading to history
+  function saveToHistory(report){ report.id = Date.now().toString(36); HISTORY.unshift(report); localStorage.setItem(STORAGE_KEY, JSON.stringify(HISTORY)); }
+
+  // History modal management
+  document.getElementById('historyOpenBtn').addEventListener('click', ()=>{ document.getElementById('histSearch').value=''; renderHistory(); new bootstrap.Modal(document.getElementById('historyModal')).show(); });
+  document.getElementById('clearHistoryBtn').addEventListener('click', ()=>{ if(confirm('Clear all saved readings?')){ HISTORY=[]; localStorage.removeItem(STORAGE_KEY); renderHistory(); }});
+  document.getElementById('histSearch').addEventListener('input', renderHistory);
+
+  function renderHistory(){ const list = document.getElementById('historyList'); list.innerHTML=''; const q = (document.getElementById('histSearch').value||'').toLowerCase(); if(!HISTORY.length){ list.innerHTML=`<div class='muted'>${translations.en.noData}</div>`; return;} HISTORY.forEach(item=>{ if(q && !(item.fullName.toLowerCase().includes(q) || item.dob.includes(q))) return; const el = document.createElement('div'); el.className='mb-2 p-2 card-pulse'; el.innerHTML = `<div class='d-flex justify-content-between align-items-start'><div><strong>${esc(item.fullName)}</strong><div class='muted small'>${esc(item.dob)} • ${esc(item.city||'')}</div></div><div><button class='btn btn-sm btn-outline-light me-1' onclick='viewHistory("${item.id}")'>View</button><button class='btn btn-sm btn-danger' onclick='deleteHistory("${item.id}")'>Delete</button></div></div>`; list.appendChild(el); }); }
+
+  window.viewHistory = function(id){ const it = HISTORY.find(h=>h.id===id); if(!it) return alert('Not found'); renderReport(it); new bootstrap.Modal(document.getElementById('historyModal')).hide(); }
+  window.deleteHistory = function(id){ if(!confirm('Delete this entry?')) return; HISTORY = HISTORY.filter(h=>h.id!==id); localStorage.setItem(STORAGE_KEY, JSON.stringify(HISTORY)); renderHistory(); }
+
+  // Save profile button (simple local save of form fields)
+  document.getElementById('saveProfileBtn').addEventListener('click', ()=>{
+    const p = readForm(); if(!p.fullName) return alert('Fill name'); const profiles = JSON.parse(localStorage.getItem('splp_profiles_v1')||'[]'); profiles.unshift({id:Date.now().toString(36), ...p}); localStorage.setItem('splp_profiles_v1', JSON.stringify(profiles)); alert(translations.en.saveOK);
+  });
+
+  // Copy report to clipboard
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    if(resultsWrapper.classList.contains('d-none')) return alert('No reading to copy'); let text = '';
+    text += document.querySelector('.result-title') ? document.querySelector('.result-title').textContent + '\n' : '';
+    document.querySelectorAll('#detailedSections .result-card').forEach(card=>{ text += card.querySelector('.result-title').textContent + '\n' + (card.querySelector('.muted')?card.querySelector('.muted').textContent:'') + '\n\n'; });
+    navigator.clipboard.writeText(text).then(()=>alert('Report copied'));
+  });
+
+  // Share buttons
+  document.getElementById('shareWhats').addEventListener('click', ()=>{ const url = encodeURIComponent(location.href); window.open(`https://wa.me/?text=Check my reading: ${url}`,'_blank');});
+  document.getElementById('shareFB').addEventListener('click', ()=>{ const url = encodeURIComponent(location.href); window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`,'_blank');});
+
+  // Download full page report as PDF (capture resultsWrapper)
+  document.getElementById('downloadAllBtn').addEventListener('click', async ()=>{
+    if(resultsWrapper.classList.contains('d-none')) return alert('No results');
+    const el = document.querySelector('.results-area');
+    await exportElementToPDF(el, 'LifePath_Report.pdf');
+  });
+
+  async function exportElementToPDF(el, filename='report.pdf'){
+    try{
+      const canvas = await html2canvas(el, {scale:1.6, useCORS:true});
+      const img = canvas.toDataURL('image/jpeg', 0.95);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({unit:'pt', format:'a4'});
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pdfWidth = pageWidth - 40;
+      const imgProps = pdf.getImageProperties(img);
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(img,'JPEG',20,20,pdfWidth,pdfHeight);
+      pdf.save(filename);
+    }catch(e){ alert('Export failed: '+ e.message); }
+  }
+
+  // Initialize language and load history
+  (function init(){
+    applyLanguage('en');
+    HISTORY = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    renderHistory();
+  })();
+
+  </script></body>
 </html>
