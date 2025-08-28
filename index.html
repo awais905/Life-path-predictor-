@@ -2,192 +2,171 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Love Calculator ❤️</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Future Prediction App</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a, #2c2c54);
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
       color: white;
       text-align: center;
-      padding: 40px;
+      padding: 20px;
     }
     h1 {
-      font-size: 2.5rem;
       margin-bottom: 20px;
-      color: #ff4d6d;
     }
-    .container {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 25px;
-      border-radius: 20px;
-      width: 400px;
-      margin: auto;
-      box-shadow: 0 0 15px rgba(255, 0, 100, 0.4);
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      margin: 15px auto;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
     input {
-      padding: 12px;
-      margin: 10px;
-      width: 80%;
-      border-radius: 10px;
+      padding: 10px;
+      margin: 10px 0;
       border: none;
-      outline: none;
-      text-align: center;
-      font-size: 1rem;
+      border-radius: 8px;
+      width: 90%;
     }
     button {
-      padding: 12px 20px;
-      margin: 10px;
-      border: none;
-      border-radius: 12px;
-      background: #ff4d6d;
+      background: #ff9800;
       color: white;
-      font-size: 1rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s;
+      margin-top: 10px;
     }
     button:hover {
-      background: #ff1a4d;
-      transform: scale(1.05);
+      background: #e68900;
     }
-    #history {
-      margin-top: 20px;
-      text-align: left;
-      max-height: 200px;
-      overflow-y: auto;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.07);
-      border-radius: 12px;
-    }
-    .history-item {
-      margin: 5px 0;
-      padding: 8px;
-      background: rgba(255, 77, 109, 0.1);
-      border-radius: 8px;
-    }
-    /* Popup Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: #2c2c54;
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
-      width: 350px;
-      box-shadow: 0 0 20px rgba(255,77,109,0.5);
-    }
-    .close {
-      float: right;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: #ff4d6d;
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>❤️ Love Calculator ❤️</h1>
-  <div class="container">
-    <input type="text" id="name1" placeholder="Enter Your Name">
-    <input type="text" id="name2" placeholder="Enter Your Partner's Name"><br>
-    <button onclick="calculateLove()">Calculate Love</button>
-    <button onclick="clearHistory()">Clear History</button>
-    <button onclick="downloadPDF()">Download PDF</button>
-    <div id="history"><h3>History</h3></div>
+
+  <h1>🔮 Future Prediction App</h1>
+
+  <!-- Love Calculator -->
+  <div class="card">
+    <h2>❤️ Love Calculator</h2>
+    <input type="text" id="loveName1" placeholder="Enter your name">
+    <input type="text" id="loveName2" placeholder="Enter partner name">
+    <button onclick="loveCalculator()">Calculate Love %</button>
+    <div class="result" id="loveResult"></div>
   </div>
 
-  <!-- Popup Modal -->
-  <div id="resultModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h2 id="modalResult"></h2>
-      <p id="modalPrediction"></p>
-    </div>
+  <!-- Friendship Calculator -->
+  <div class="card">
+    <h2>🤝 Friendship Calculator</h2>
+    <input type="text" id="friendName1" placeholder="Enter your name">
+    <input type="text" id="friendName2" placeholder="Enter friend name">
+    <button onclick="friendshipCalculator()">Check Friendship</button>
+    <div class="result" id="friendResult"></div>
+  </div>
+
+  <!-- Career Prediction -->
+  <div class="card">
+    <h2>💼 Career Prediction</h2>
+    <input type="text" id="careerName" placeholder="Enter your name">
+    <button onclick="careerPrediction()">Predict Career</button>
+    <div class="result" id="careerResult"></div>
+  </div>
+
+  <!-- Future Fortune -->
+  <div class="card">
+    <h2>🌟 Future Fortune</h2>
+    <input type="text" id="fortuneName" placeholder="Enter your name">
+    <button onclick="futureFortune()">See Fortune</button>
+    <div class="result" id="fortuneResult"></div>
   </div>
 
   <script>
-    const { jsPDF } = window.jspdf;
-    let historyData = [];
-
-    function calculateLove() {
-      let name1 = document.getElementById('name1').value.trim();
-      let name2 = document.getElementById('name2').value.trim();
-
-      if (!name1 || !name2) {
-        alert("Please enter both names!");
+    // Love Calculator
+    function loveCalculator() {
+      let name1 = document.getElementById("loveName1").value;
+      let name2 = document.getElementById("loveName2").value;
+      if (name1 === "" || name2 === "") {
+        document.getElementById("loveResult").innerText = "⚠️ Please enter both names!";
         return;
       }
-
-      let lovePercent = Math.floor(Math.random() * 41) + 60; // 60% - 100%
-      let predictions = [
-        "A strong bond filled with happiness 💕",
-        "Your love will overcome all obstacles 🌹",
-        "A magical connection that will last forever ✨",
-        "Your journey together will be beautiful 💑",
-        "Love and trust define your relationship ❤️",
-        "You both complete each other perfectly 💍"
+      let percentage = Math.floor(Math.random() * 101);
+      let lines = [
+        "🔥 A match made in heaven!",
+        "💔 Might face ups and downs, but love wins!",
+        "🌹 A sweet bond full of romance.",
+        "⚡ Strong attraction, keep the spark alive!",
+        "🌈 Destiny is on your side!"
       ];
-      let prediction = predictions[Math.floor(Math.random() * predictions.length)];
-
-      let resultText = `${name1} ❤️ ${name2} = ${lovePercent}%`;
-
-      // Save in history
-      let entry = { text: resultText, prediction: prediction };
-      historyData.push(entry);
-      updateHistory();
-
-      // Show popup
-      document.getElementById("modalResult").innerText = resultText;
-      document.getElementById("modalPrediction").innerText = prediction;
-      document.getElementById("resultModal").style.display = "flex";
+      let randomLine = lines[Math.floor(Math.random() * lines.length)];
+      document.getElementById("loveResult").innerText = `${name1} ❤️ ${name2} = ${percentage}%\n${randomLine}`;
     }
 
-    function updateHistory() {
-      let historyDiv = document.getElementById("history");
-      historyDiv.innerHTML = "<h3>History</h3>";
-      historyData.forEach(item => {
-        let div = document.createElement("div");
-        div.className = "history-item";
-        div.textContent = item.text + " → " + item.prediction;
-        historyDiv.appendChild(div);
-      });
-    }
-
-    function clearHistory() {
-      historyData = [];
-      updateHistory();
-    }
-
-    function closeModal() {
-      document.getElementById("resultModal").style.display = "none";
-    }
-
-    function downloadPDF() {
-      if (historyData.length === 0) {
-        alert("No history to download!");
+    // Friendship Calculator
+    function friendshipCalculator() {
+      let name1 = document.getElementById("friendName1").value;
+      let name2 = document.getElementById("friendName2").value;
+      if (name1 === "" || name2 === "") {
+        document.getElementById("friendResult").innerText = "⚠️ Please enter both names!";
         return;
       }
-      const doc = new jsPDF();
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.text("❤️ Love Calculator Results ❤️", 20, 20);
-      doc.setFontSize(12);
-      let y = 40;
-      historyData.forEach((item, index) => {
-        doc.text(`${index + 1}. ${item.text} - ${item.prediction}`, 20, y);
-        y += 10;
-      });
-      doc.save("LoveResults.pdf");
+      let percentage = Math.floor(Math.random() * 101);
+      let lines = [
+        "🤗 Best friends forever!",
+        "😂 You two share lots of laughs.",
+        "💪 A strong and supportive bond.",
+        "🌍 Distance doesn’t matter in this friendship.",
+        "⚡ Friendship full of energy!"
+      ];
+      let randomLine = lines[Math.floor(Math.random() * lines.length)];
+      document.getElementById("friendResult").innerText = `${name1} 🤝 ${name2} = ${percentage}%\n${randomLine}`;
+    }
+
+    // Career Prediction
+    function careerPrediction() {
+      let name = document.getElementById("careerName").value;
+      if (name === "") {
+        document.getElementById("careerResult").innerText = "⚠️ Please enter your name!";
+        return;
+      }
+      let careers = [
+        "💼 Successful Businessperson",
+        "🎤 Famous Singer",
+        "🎬 Popular Actor",
+        "👨‍💻 Software Engineer",
+        "🌍 World Traveler",
+        "📚 Great Teacher",
+        "🏥 Doctor helping many lives"
+      ];
+      let randomCareer = careers[Math.floor(Math.random() * careers.length)];
+      document.getElementById("careerResult").innerText = `${name}, your career path is: ${randomCareer}`;
+    }
+
+    // Future Fortune
+    function futureFortune() {
+      let name = document.getElementById("fortuneName").value;
+      if (name === "") {
+        document.getElementById("fortuneResult").innerText = "⚠️ Please enter your name!";
+        return;
+      }
+      let fortunes = [
+        "🌟 You will achieve great success soon.",
+        "💖 A new relationship will bring happiness.",
+        "💰 Financial growth is on the way.",
+        "✈️ A surprise journey is waiting for you.",
+        "🏆 You will be recognized for your hard work."
+      ];
+      let randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+      document.getElementById("fortuneResult").innerText = `${name}, your fortune: ${randomFortune}`;
     }
   </script>
+
 </body>
 </html>
