@@ -1,345 +1,495 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Life Predictor</title>  <!-- Fonts -->  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">  <!-- Bootstrap 5 -->  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>  <meta name="description" content="Life Predictor — Numerology & cultural-inspired life readings. For entertainment only.">  <style>
-    :root{
-      --primary:#8B0000; /* dark red */
-      --secondary:#0b3b3b; /* deep teal */
-      --accent:#301934; /* deep purple */
-      --gold:#FFD700;
-      --white:#FFFFFF;
-      --muted:#2F2F2F;
-      --card-bg: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-      --radius:14px;
-      --max-width:1100px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,var(--primary),var(--accent));color:var(--white)}
-
-    /* NAVBAR */
-    .navbar{backdrop-filter: blur(4px);}
-    .navbar-brand{font-family:'Playfair Display',serif;font-weight:700}
-    .logo-circle{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),#f0b000);color:#3a1f00}
-
-    .container-main{max-width:var(--max-width);margin:26px auto;padding:12px}
-
-    /* Form Card */
-    .card-premium{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.08));border-radius:var(--radius);border:1px solid rgba(255,255,255,0.04);box-shadow:0 10px 30px rgba(0,0,0,.45)}
-    label{font-weight:600;color:var(--gold);}
-    .form-control, .form-select{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:var(--white)}
-
-    /* Buttons */
-    .btn-premium{background:linear-gradient(180deg,var(--primary),var(--secondary));border:2px solid var(--gold);color:var(--white);box-shadow:0 8px 28px rgba(0,0,0,.45)}
-    .btn-premium:hover{transform:translateY(-3px);box-shadow:0 20px 40px rgba(0,0,0,.6)}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--white)}
-
-    /* Loading orb */
-    .orb{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,215,0,0.95), rgba(255,215,0,0.6) 20%, rgba(139,0,0,0.12) 40%, transparent 60%);box-shadow:0 0 40px rgba(255,215,0,0.12);animation:orb-spin 1.8s linear infinite}
-    @keyframes orb-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-
-    /* Results */
-    .results-area{margin-top:18px}
-    .result-card{background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));padding:14px;border-radius:12px;border-left:4px solid var(--gold);margin-bottom:12px;transition:transform .25s ease,box-shadow .25s ease}
-    .result-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,0.5)}
-    .result-title{font-weight:800;color:var(--gold);display:flex;align-items:center;gap:10px}
-    .muted{color:#cfcfcf}
-
-    /* Life strength */
-    .strength-bar{height:12px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
-    .strength-fill{height:100%;background:linear-gradient(90deg,var(--gold),#ffd86b);width:0%;transition:width 900ms ease-in-out}
-
-    /* Signature shimmer */
-    .signature{color:var(--gold);font-weight:900;text-align:center;padding:10px;font-family:'Playfair Display',serif}
-    .shimmer{display:inline-block;background:linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.6), rgba(255,255,255,0.1));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 2.8s linear infinite}
-    @keyframes shimmer{0%{background-position:0% 0%}100%{background-position:200% 0%}}
-
-    /* Timeline */
-    canvas{max-width:100%;height:auto}
-
-    /* Modal History tweaks */
-    .modal-content{background:linear-gradient(180deg,#0f0b0b,#1a0f0f);color:var(--white)}
-
-    /* Fancy reveal animation */
-    .fade-up{opacity:0;transform:translateY(14px);animation:fadeUp .5s forwards}
-    .fade-up.delay-1{animation-delay:.12s}
-    .fade-up.delay-2{animation-delay:.24s}
-    .fade-up.delay-3{animation-delay:.36s}
-    @keyframes fadeUp{to{opacity:1;transform:none}}
-
-    /* Small screens */
-    @media(max-width:768px){.container-main{padding:8px}}
-  </style></head>
-<body><nav class="navbar navbar-expand-lg navbar-dark" style="background:linear-gradient(90deg,var(--primary),var(--accent));position:sticky;top:0;z-index:1000;box-shadow:0 6px 18px rgba(0,0,0,.4)">
-  <div class="container-fluid px-3">
-    <a class="navbar-brand" href="#">
-      <span class="logo-circle" aria-hidden="true"><i class="fa-solid fa-moon"></i></span>
-      <span class="ms-2">Life Predictor</span>
-    </a><div class="d-flex align-items-center">
-  <div class="dropdown me-2">
-    <button class="btn btn-sm btn-transparent text-white dropdown-toggle" id="langBtn" data-bs-toggle="dropdown" aria-expanded="false">English</button>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langBtn">
-      <li><a class="dropdown-item lang-select" href="#" data-lang="en">English</a></li>
-      <li><a class="dropdown-item lang-select" href="#" data-lang="ur">اردو</a></li>
-      <li><a class="dropdown-item lang-select" href="#" data-lang="sr">سرائیکی</a></li>
-    </ul>
-  </div>
-</div>
-
-  </div>
-</nav><main class="container-main">  <!-- Disclaimer modal (first load) -->  <div class="modal fade" id="disclaimerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content p-3">
-        <div class="modal-header border-0">
-          <h5 class="modal-title">Disclaimer</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MysticOracle - Future Insight Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-bg: #0f0e17;
+            --secondary-bg: #1a1a40;
+            --accent: #6f42c1;
+            --gold: #ffd700;
+            --text: #f8f9fa;
+            --glass-bg: rgba(26, 26, 64, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: var(--primary-bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(111, 66, 193, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 20%),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%236f42c1' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .tagline {
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .input-section {
+            text-align: center;
+        }
+        
+        h2 {
+            font-family: 'Crimson Pro', serif;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group {
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            background: rgba(15, 14, 23, 0.7);
+            color: var(--text);
+            font-family: 'Lora', serif;
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(111, 66, 193, 0.5);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--accent), #5a2d9c);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Crimson Pro', serif;
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.6);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-section {
+            display: none;
+        }
+        
+        .prediction-card {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent);
+            background: rgba(15, 14, 23, 0.5);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .prediction-card h3 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Crimson Pro', serif;
+            border: 1px solid var(--glass-border);
+            background: rgba(26, 26, 64, 0.5);
+            color: var(--text);
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .crystal-ball {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, var(--accent) 60%);
+            box-shadow: 0 0 30px var(--accent);
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px var(--accent); }
+            50% { box-shadow: 0 0 40px var(--accent); }
+            100% { box-shadow: 0 0 20px var(--accent); }
+        }
+        
+        .disclaimer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(26, 26, 64, 0.5);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .glass-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MysticOracle</h1>
+            <p class="tagline">Unlock the secrets of your destiny</p>
+        </header>
+        
+        <main class="main-content">
+            <section class="input-section glass-card">
+                <h2>Reveal Your Future</h2>
+                <form id="prediction-form">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="name">Your Full Name</label>
+                            <input type="text" id="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="input-group">
+                            <label for="father-name">Father's Name</label>
+                            <input type="text" id="father-name" required placeholder="Enter your father's name">
+                        </div>
+                        <div class="input-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="city">City of Birth</label>
+                            <input type="text" id="city" required placeholder="Enter your city of birth">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Predict My Future <i class="fas fa-crystal-ball"></i></button>
+                </form>
+            </section>
+            
+            <div class="loading" id="loading">
+                <div class="crystal-ball"></div>
+                <p>Consulting the cosmic energies...</p>
+            </div>
+            
+            <section class="result-section glass-card" id="result-section">
+                <h2>Your Destiny Awaits</h2>
+                
+                <div class="prediction-card">
+                    <h3>Life Path & Destiny</h3>
+                    <p id="life-path-text">Calculating your life path number...</p>
+                </div>
+                
+                <div class="prediction-card">
+                    <h3>Personality Insights</h3>
+                    <p id="personality-text">Analyzing your personality traits...</p>
+                </div>
+                
+                <div class="prediction-card">
+                    <h3>Future Timeline</h3>
+                    <p id="future-text">Mapping out your future events...</p>
+                </div>
+                
+                <div class="prediction-card">
+                    <h3>Lucky Elements</h3>
+                    <p id="lucky-text">Determining your lucky factors...</p>
+                </div>
+                
+                <div class="share-buttons">
+                    <button class="share-btn" onclick="shareResults()"><i class="fas fa-share-alt"></i> Share Results</button>
+                    <button class="share-btn" onclick="downloadResults()"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </section>
+        </main>
+        
+        <div class="disclaimer">
+            <p><i class="fas fa-exclamation-circle"></i> Disclaimer: This website is for entertainment purposes only. The predictions are not based on scientific methods and should not be taken as factual advice. Enjoy the fun!</p>
         </div>
-        <div class="modal-body">This tool is for entertainment only. Readings are inspired by traditional numerology and Ilm‑e‑Najoom — not scientific advice.</div>
-        <div class="modal-footer border-0">
-          <button class="btn btn-sm btn-premium" data-bs-dismiss="modal">I Understand</button>
-        </div>
-      </div>
-    </div>
-  </div>  <!-- FORM -->  <section class="card-premium p-3 fade-up">
-    <form id="predictForm" autocomplete="off" novalidate>
-      <div class="row gy-2">
-        <div class="col-12 col-md-6">
-          <label for="fullName" id="lblFullName">Full Name</label>
-          <input id="fullName" name="fullName" class="form-control" placeholder="e.g., Muhammad Ali" aria-label="Full Name" required>
-        </div>
-        <div class="col-12 col-md-6">
-          <label for="fatherName" id="lblFather">Father's Name</label>
-          <input id="fatherName" name="fatherName" class="form-control" placeholder="e.g., Ahmed Khan" aria-label="Father's Name" required>
-        </div><div class="col-12 col-md-4">
-      <label for="dob" id="lblDob">Date of Birth</label>
-      <input id="dob" name="dob" type="date" class="form-control" aria-label="Date of Birth" required>
+        
+        <footer>
+            <p>MysticOracle &copy; 2023 | Explore Your Destiny</p>
+        </footer>
     </div>
 
-    <div class="col-12 col-md-4">
-      <label for="city" id="lblCity">City</label>
-      <select id="city" name="city" class="form-select" aria-label="City">
-        <option value="">-- Select City --</option>
-        <option value="Multan">Multan</option>
-        <option value="Bahawalpur">Bahawalpur</option>
-        <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
-        <option value="Rahim Yar Khan">Rahim Yar Khan</option>
-        <option value="Muzaffargarh">Muzaffargarh</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
-
-    <div class="col-12 col-md-4">
-      <label for="cityOther" id="lblCityOther">City (Other)</label>
-      <input id="cityOther" name="cityOther" class="form-control" placeholder="If not listed">
-    </div>
-
-    <div class="col-12 col-md-6">
-      <label for="gender" id="lblGender">Gender</label>
-      <select id="gender" name="gender" class="form-select">
-        <option value="">Prefer not to say</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-
-    <div class="col-12 col-md-6">
-      <label for="focus" id="lblFocus">Focus (optional)</label>
-      <input id="focus" name="focus" class="form-control" placeholder="career, marriage, health...">
-    </div>
-
-    <div class="col-12 d-flex gap-2 align-items-center mt-3">
-      <button type="submit" id="predictBtn" class="btn btn-premium"><i class="fa-solid fa-magic-wand-sparkles me-2"></i> Predict My Future</button>
-      <button type="button" id="saveProfileBtn" class="btn btn-ghost ms-1"><i class="fa-solid fa-bookmark me-1"></i> Save Profile</button>
-      <div class="ms-auto d-flex gap-2">
-        <button type="button" id="shareWhats" class="btn btn-ghost" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
-        <button type="button" id="shareFB" class="btn btn-ghost" title="Share on Facebook"><i class="fa-brands fa-facebook"></i></button>
-        <button type="button" id="openHistoryBtn" class="btn btn-ghost" title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
-      </div>
-    </div>
-  </div>
-</form>
-
-  </section>  <!-- Loading -->  <div id="loading" class="text-center mt-3 d-none">
-    <div class="orb mx-auto" role="status" aria-hidden="true"></div>
-    <div class="muted mt-2">Consulting the stars...</div>
-  </div>  <!-- Results -->  <section id="resultsWrapper" class="results-area d-none">
-    <div class="result-card fade-up delay-1">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <div class="result-title"><i class="fa-solid fa-compass"></i> Life Path Strength</div>
-          <div class="muted small">A quick measure of your current life energy</div>
-        </div>
-        <div style="width:40%">
-          <div class="strength-bar"><div id="strengthFill" class="strength-fill"></div></div>
-          <div class="small muted mt-1" id="strengthLabel">—</div>
-        </div>
-      </div>
-    </div><div id="detailedSections" class="fade-up delay-2"></div>
-
-<div class="result-card fade-up delay-3">
-  <div class="result-title"><i class="fa-solid fa-chart-line"></i> Key Timeline</div>
-  <canvas id="timelineChart" height="80" aria-label="Timeline chart"></canvas>
-</div>
-
-<div class="d-flex gap-2 mt-3">
-  <button id="downloadAllBtn" class="btn btn-premium"><i class="fa-solid fa-file-download me-1"></i> Download PDF</button>
-  <button id="copyBtn" class="btn btn-ghost"><i class="fa-solid fa-copy me-1"></i> Copy Report</button>
-</div>
-
-  </section>  <div class="signature mt-4"><span class="shimmer">✨ Created by BHuTTa ✨</span></div>  <footer class="mt-4 muted small text-center">© 2025 - For Entertainment Only • Host: GitHub Pages</footer></main><!-- History Modal --><div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content p-3">
-      <div class="modal-header border-0">
-        <h5 class="modal-title">Saved Readings</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-2"><input id="histSearch" class="form-control" placeholder="Search by name or DOB" aria-label="Search history"></div>
-        <div id="historyList" style="max-height:50vh;overflow:auto"></div>
-      </div>
-      <div class="modal-footer border-0">
-        <button id="clearHistoryBtn" class="btn btn-danger">Clear History</button>
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div><!-- Libraries --><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script>
-// Translations
-const translations = {
-  en:{ title:'Life Predictor', predictBtn:'Predict My Future', disclaimer:'This is for entertainment only.', sections:{personality:'Personality Insights',career:'Career Forecast',love:'Love & Marriage',health:'Health & Wealth',challenges:'Challenges & Remedies',timeline:'Timeline of Key Events'}, saveOK:'Profile saved locally', noData:'No saved readings' },
-  ur:{ title:'زندگی کی پیشن گوئی', predictBtn:'میری زندگی بتائیں', disclaimer:'یہ صرف تفریح کے لئے ہے۔', sections:{personality:'شخصی جانکاری',career:'پیشہ وارانہ پیشن گوئی',love:'محبت اور نکاح',health:'صحت و دولت',challenges:'چیلنجز اور علاج',timeline:'اہم وقتی اَوراق'}, saveOK:'پروفائل محفوظ ہوگیا', noData:'کوئی محفوظ شدہ قرات نہیں' },
-  sr:{ title:'زندگی دی پیشن گوئی', predictBtn:'میری زندگی دسو', disclaimer:'ایہ صرف تفریح لئی اے۔', sections:{personality:'شخصی حال',career:'روزگار دی پیشن گوئی',love:'محبت تے شادی',health:'صحت تے دولت',challenges:'مشکلات تے علاج',timeline:'اہم واقعات'}, saveOK:'پروفائل محفوظ ہو گیا', noData:'کوئی محفوظ ریکارڈ نئیں' }
-};
-
-// Simple utilities
-const STORAGE_KEY = 'lp_history_v2';
-let HISTORY = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-let currentLang = 'en';
-
-function esc(s){ return String(s||'').replace(/[&<>"'`]/g,ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;' }[ch])); }
-
-// Numerology helpers
-const letterMap = (function(){const m={};const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';for(let i=0;i<letters.length;i++){m[letters[i]]=(i%9)+1;}return m;})();
-function nameNumber(name){ if(!name) return 0; const s = name.toUpperCase().replace(/[^A-Z]/g,''); let sum=0; for(const ch of s) sum += letterMap[ch]||0; while(sum>9 && ![11,22,33].includes(sum)){ let t=0; String(sum).split('').forEach(d=>t+=Number(d)); sum=t;} return sum; }
-function planetIndex(dob, city){ try{ const date = new Date(dob); const seed = date.getFullYear() + date.getMonth()+1 + date.getDate(); const coords = (CITY_COORDS[city]||{lat:0,lon:0}); const idx = Math.abs(Math.floor((seed + Math.round(coords.lat) + Math.round(coords.lon)) % 9)) + 1; return idx;}catch(e){return 5;} }
-
-const CITY_COORDS = { 'Multan':{lat:30.1978,lon:71.4695}, 'Bahawalpur':{lat:29.3956,lon:71.6830}, 'Dera Ghazi Khan':{lat:30.0561,lon:70.6356}, 'Rahim Yar Khan':{lat:28.4214,lon:70.2988}, 'Muzaffargarh':{lat:30.0700,lon:71.1920} };
-
-// Build a report
-function buildReport(payload, lang='en'){
-  const L = translations[lang]||translations.en;
-  const {fullName,fatherName,dob,city,gender,focus} = payload;
-  const nameNum = nameNumber(fullName);
-  const lifePath = nameNumber(fullName || dob.replace(/[^0-9]/g,''));
-  const pIndex = planetIndex(dob, city);
-
-  // simple textual pools
-  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
-  const personalityPool = {
-    en:[`A deep soul with quiet determination. Your name number ${nameNum} shows creative potential.`,`Reflective and steady — your presence is calming to others.`],
-    ur:[`گہرا مزاج اور مضبوط ارادہ۔ آپ کے نام کا نمبر ${nameNum} تخلیقی صلاحیت بتاتا ہے۔`,`متاثر کن خاموشی، آپ دوسروں کو تسلی دیتے ہیں۔`],
-    sr:[`گہرا ذہن تے مضبوط عزم؛ ناں دا نمبر ${nameNum} تخلیق نوں وکھاندہ اے۔`,`پرامن طبعیت، لوک توانوں سکون سمجھدے نیں۔`]
-  };
-  const careerPool = { en:[`This cycle favors steady growth and recognition.`,`Consider skill-building and community trust.`], ur:[`یہ وقت ترقی اور پہچان کا ہے۔`,`مہارتوں پر کام کریں اور برادری کا اعتماد حاصل کریں۔`], sr:[`ایہہ وقت ترقی تے پہچان دا اے۔`,`ہنر ودھاؤ تے لوکاں نال رشتہ بناؤ۔`] };
-  const lovePool = { en:[`Open-hearted communication will deepen bonds.`,`A stable relationship is likely with shared values.`], ur:[`کھلے دل سے بات چیت رشتوں کو مضبوط کرے گی۔`,`مشترکہ اقدار کے ساتھ مستحکم تعلق ممکن ہے۔`], sr:[`صاف دل نال گل بات رشتے مضبوط کرے گی۔`,`مشترکہ قدران دے نال رشتہ مضبوط ہووے گا۔`] };
-  const healthPool = { en:[`Balance and routine will support well-being.`,`Simple habits like walking and hydration help.`], ur:[`توازن اور معمولات صحت کو بہتر بنائیں گے۔`,`سادہ عادات جیسے سیر اور پانی مفید ہیں۔`], sr:[`روزمرہ معمول تہاڈی صحت نوں بہتر کرے گا۔`,`سادہ عادات نال فائدہ ہووے گا۔`] };
-  const challengesPool = { en:[`Short-term delays are likely — patience and prayer help.`,`Consult elders and maintain steady effort.`], ur:[`مختصر رکاوٹیں ممکن ہیں — صبر اور دعا مددگار ہیں۔`,`بزرگوں سے مشورہ کریں اور محنت جاری رکھیں۔`], sr:[`کجھ دِیر والی رکاوٹاں آ سکدیاں نیں — صبر تے دعا نال حل۔`,`بزرگاں کول مشورہ لو تے محنت جاری رکھو۔`] };
-
-  const personality = pick(personalityPool[lang]);
-  const career = pick(careerPool[lang]);
-  const love = pick(lovePool[lang]);
-  const health = pick(healthPool[lang]);
-  const challenges = pick(challengesPool[lang]);
-
-  const strength = Math.min(100, Math.max(18, Math.round((nameNum*7 + pIndex*6 + Math.random()*30) % 100)));
-  const baseYear = (new Date(dob)).getFullYear() || new Date().getFullYear();
-  const timeline = Array.from({length:5}).map((_,i)=>({year: baseYear + (i+1), score: Math.min(100, Math.round((strength + (i*6) + Math.random()*25) % 100))}));
-
-  const remedies = { en:`Simple remedies: daily prayer, small acts of charity, and steady sleep/routine. Seek counsel from elders.`, ur:`عملی اقدامات: روزانہ دعا، صدقہ اور باقاعدہ آرام۔ بزرگوں سے مشورہ لیں۔`, sr:`عملی ہدایات: روزانہ دعا، صدقہ، تے آرام رکھو۔` };
-
-  return { lang, fullName, fatherName, dob, city, gender, focus, nameNum, lifePath, planetIndex:pIndex, strength, personality, career, love, health, challenges, remedies:remedies[lang], timeline };
-}
-
-// UI bindings
-const form = document.getElementById('predictForm');
-const loadingEl = document.getElementById('loading');
-const resultsWrapper = document.getElementById('resultsWrapper');
-const detailedSections = document.getElementById('detailedSections');
-const strengthFill = document.getElementById('strengthFill');
-const strengthLabel = document.getElementById('strengthLabel');
-const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-let timelineChart = null;
-
-// Show disclaimer once
-const discModal = new bootstrap.Modal(document.getElementById('disclaimerModal'));
-if(!localStorage.getItem('lp_seen')){ discModal.show(); localStorage.setItem('lp_seen','1'); }
-
-// Language selector
-document.querySelectorAll('.lang-select').forEach(el=> el.addEventListener('click', (e)=>{ e.preventDefault(); const code = el.dataset.lang; setLanguage(code); }));
-function setLanguage(code){ currentLang = code; const L = translations[code]||translations.en; document.getElementById('langBtn').textContent = (code==='ur'? 'اردو' : code==='sr'? 'سرائیکی' : 'English'); if(code==='ur' || code==='sr'){ document.documentElement.dir='rtl'; document.body.dir='rtl'; } else { document.documentElement.dir='ltr'; document.body.dir='ltr'; } // update labels
-  document.getElementById('lblFullName').textContent = (code==='ur'? 'پورا نام' : code==='sr'? 'پورا ناں' : 'Full Name');
-  document.getElementById('lblFather').textContent = (code==='ur'? 'والد کا نام' : code==='sr'? 'والد دا ناں' : "Father's Name");
-  document.getElementById('lblDob').textContent = (code==='ur'? 'پیدائش کی تاریخ' : code==='sr'? 'جنم دی تاریخ' : 'Date of Birth');
-  document.getElementById('lblCity').textContent = (code==='ur'? 'شہر' : code==='sr'? 'شہر' : 'City');
-  document.getElementById('lblCityOther').textContent = (code==='ur'? 'شہر (دیگر)' : code==='sr'? 'شہر (دوجا)' : 'City (Other)');
-  document.getElementById('lblGender').textContent = (code==='ur'? 'جنس' : code==='sr'? 'جنس' : 'Gender');
-  document.getElementById('lblFocus').textContent = (code==='ur'? 'مرکزی سوال (اختیاری)' : code==='sr'? 'مرکزی سوال' : 'Focus (optional)');
-  document.getElementById('predictBtn').innerHTML = (code==='ur'? 'میری زندگی بتائیں' : code==='sr'? 'میری زندگی دسو' : '<i class="fa-solid fa-magic-wand-sparkles me-2"></i> Predict My Future');
-}
-setLanguage('en');
-
-// Read form
-function readForm(){ const fullName = document.getElementById('fullName').value.trim(); const fatherName = document.getElementById('fatherName').value.trim(); const dob = document.getElementById('dob').value; let city = document.getElementById('city').value; const cityOther = document.getElementById('cityOther').value.trim(); if(city==='Other' && cityOther) city = cityOther; const gender = document.getElementById('gender').value; const focus = document.getElementById('focus').value.trim(); return {fullName,fatherName,dob,city,gender,focus}; }
-
-// Submit
-form.addEventListener('submit', async (e)=>{ e.preventDefault(); const payload = readForm(); if(!payload.fullName || !payload.fatherName || !payload.dob){ alert(currentLang==='ur'? 'براہ کرم تمام ضروری فیلڈز پر کریں' : currentLang==='sr'? 'مکمل فارم بھرو' : 'Please complete Name, Father and DOB'); return;} loadingEl.classList.remove('d-none'); resultsWrapper.classList.add('d-none'); await new Promise(r=>setTimeout(r,600 + Math.random()*700)); const report = buildReport(payload, currentLang); renderReport(report); saveToHistory(report); loadingEl.classList.add('d-none'); });
-
-function renderReport(r){ resultsWrapper.classList.remove('d-none'); strengthFill.style.width='0%'; setTimeout(()=>{ strengthFill.style.width = r.strength + '%'; strengthLabel.textContent = r.strength + '%'; },80); detailedSections.innerHTML=''; const L = translations[r.lang]||translations.en; function makeCard(title, icon, text){ const div = document.createElement('div'); div.className='result-card'; div.innerHTML = `<div class='result-title'><i class='fa-solid ${icon}'></i> ${esc(title)}</div><div class='mt-2 muted'>${esc(text)}</div>`; return div; }
-  detailedSections.appendChild(makeCard(L.sections.personality || 'Personality Insights','fa-user', r.personality));
-  detailedSections.appendChild(makeCard(L.sections.career || 'Career Forecast','fa-briefcase', r.career));
-  detailedSections.appendChild(makeCard(L.sections.love || 'Love & Marriage','fa-heart', r.love));
-  detailedSections.appendChild(makeCard(L.sections.health || 'Health & Wealth','fa-heart-pulse', r.health));
-  detailedSections.appendChild(makeCard(L.sections.challenges || 'Challenges & Remedies','fa-shield-halved', r.challenges + '
-
-Remedies: ' + r.remedies));
-  // Timeline
-  const years = r.timeline.map(t=>String(t.year)); const scores = r.timeline.map(t=>t.score);
-  if(timelineChart) timelineChart.destroy(); timelineChart = new Chart(timelineCtx, {type:'bar', data:{labels:years, datasets:[{label:L.sections.timeline || 'Timeline', data:scores, backgroundColor:'rgba(255,215,0,0.95)'}]}, options:{plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:100}}}});
-}
-
-// History
-function saveToHistory(report){ report.id = Date.now().toString(36); HISTORY.unshift(report); localStorage.setItem(STORAGE_KEY, JSON.stringify(HISTORY)); }
-
-// Open history
-document.getElementById('openHistoryBtn').addEventListener('click', ()=>{ renderHistory(); new bootstrap.Modal(document.getElementById('historyModal')).show(); });
-function renderHistory(){ const list = document.getElementById('historyList'); list.innerHTML=''; const q = (document.getElementById('histSearch').value||'').toLowerCase(); if(!HISTORY.length){ list.innerHTML = `<div class='muted'>${translations[currentLang].noData}</div>`; return; } HISTORY.forEach(item=>{ if(q && !(item.fullName.toLowerCase().includes(q) || item.dob.includes(q))) return; const el = document.createElement('div'); el.className='mb-2 p-2 card-premium'; el.innerHTML = `<div class='d-flex justify-content-between'><div><strong>${esc(item.fullName)}</strong><div class='muted small'>${esc(item.dob)} • ${esc(item.city||'')}</div></div><div><button class='btn btn-sm btn-ghost me-1' onclick='viewHistory("${item.id}")'>View</button><button class='btn btn-sm btn-danger' onclick='deleteHistory("${item.id}")'>Delete</button></div></div>`; list.appendChild(el); }); }
-window.viewHistory = function(id){ const it = HISTORY.find(h=>h.id===id); if(!it) return alert('Not found'); renderReport(it); new bootstrap.Modal(document.getElementById('historyModal')).hide(); }
-window.deleteHistory = function(id){ if(!confirm('Delete this entry?')) return; HISTORY = HISTORY.filter(h=>h.id!==id); localStorage.setItem(STORAGE_KEY, JSON.stringify(HISTORY)); renderHistory(); }
-
-// Save profile
-document.getElementById('saveProfileBtn').addEventListener('click', ()=>{ const p = readForm(); if(!p.fullName) return alert('Fill name'); const profiles = JSON.parse(localStorage.getItem('lp_profiles_v1')||'[]'); profiles.unshift({id:Date.now().toString(36), ...p}); localStorage.setItem('lp_profiles_v1', JSON.stringify(profiles)); alert(translations[currentLang].saveOK); });
-
-// Share
-document.getElementById('shareWhats').addEventListener('click', ()=>{ const txt = encodeURIComponent('Check my Life Predictor: ' + location.href); window.open(`https://wa.me/?text=${txt}`,'_blank'); });
-document.getElementById('shareFB').addEventListener('click', ()=>{ const url = encodeURIComponent(location.href); window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`,'_blank'); });
-
-// Copy report
-document.getElementById('copyBtn').addEventListener('click', ()=>{ if(resultsWrapper.classList.contains('d-none')) return alert('No report'); let text = ''; document.querySelectorAll('#detailedSections .result-card').forEach(c=>{ text += c.querySelector('.result-title').textContent + '
-' + (c.querySelector('.muted')?c.querySelector('.muted').textContent:'') + '
-
-'; }); navigator.clipboard.writeText(text).then(()=>alert('Report copied')); });
-
-// PDF Export
-document.getElementById('downloadAllBtn').addEventListener('click', async ()=>{ if(resultsWrapper.classList.contains('d-none')) return alert('No results'); const el = document.querySelector('.results-area'); await exportElementToPDF(el,'LifePredictor_Report.pdf'); });
-async function exportElementToPDF(el, filename='report.pdf'){ try{ const canvas = await html2canvas(el,{scale:1.6,useCORS:true}); const img = canvas.toDataURL('image/jpeg',0.95); const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:'pt', format:'a4'}); const pageWidth = pdf.internal.pageSize.getWidth(); const pdfWidth = pageWidth - 40; const imgProps = pdf.getImageProperties(img); const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width; pdf.addImage(img,'JPEG',20,20,pdfWidth,pdfHeight); pdf.save(filename);}catch(e){alert('Export failed: '+e.message);} }
-
-// Init
-(function init(){ currentLang='en'; setLanguage('en'); HISTORY = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); renderHistory(); })();
-
-</script></body>
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const fatherName = document.getElementById('father-name').value;
+            const dob = new Date(document.getElementById('dob').value);
+            const city = document.getElementById('city').value;
+            
+            // Show loading animation
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result-section').style.display = 'none';
+            
+            // Simulate processing delay
+            setTimeout(function() {
+                generatePredictions(name, fatherName, dob, city);
+                
+                // Hide loading, show results
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result-section').style.display = 'block';
+                
+                // Scroll to results
+                document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+            }, 3000);
+        });
+        
+        function generatePredictions(name, fatherName, dob, city) {
+            // Calculate life path number
+            const lifePathNumber = calculateLifePathNumber(dob);
+            
+            // Get zodiac sign
+            const zodiacSign = getZodiacSign(dob);
+            
+            // Generate predictions
+            document.getElementById('life-path-text').textContent = generateLifePathText(name, lifePathNumber);
+            document.getElementById('personality-text').textContent = generatePersonalityText(zodiacSign, name);
+            document.getElementById('future-text').textContent = generateFutureText(city, lifePathNumber, dob);
+            document.getElementById('lucky-text').textContent = generateLuckyText(name, dob, lifePathNumber);
+        }
+        
+        function calculateLifePathNumber(dob) {
+            const day = dob.getDate();
+            const month = dob.getMonth() + 1;
+            const year = dob.getFullYear();
+            
+            const sumDigits = (num) => {
+                let sum = 0;
+                while (num) {
+                    sum += num % 10;
+                    num = Math.floor(num / 10);
+                }
+                return sum;
+            };
+            
+            let total = sumDigits(day) + sumDigits(month) + sumDigits(year);
+            
+            while (total > 9 && total !== 11 && total !== 22 && total !== 33) {
+                total = sumDigits(total);
+            }
+            
+            return total;
+        }
+        
+        function getZodiacSign(dob) {
+            const day = dob.getDate();
+            const month = dob.getMonth() + 1;
+            
+            if ((month === 1 && day <= 20) || (month === 12 && day >= 22)) {
+                return "Capricorn";
+            } else if ((month === 1 && day >= 21) || (month === 2 && day <= 18)) {
+                return "Aquarius";
+            } else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) {
+                return "Pisces";
+            } else if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) {
+                return "Aries";
+            } else if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) {
+                return "Taurus";
+            } else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) {
+                return "Gemini";
+            } else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) {
+                return "Cancer";
+            } else if ((month === 7 && day >= 23) || (month === 8 && day <= 23)) {
+                return "Leo";
+            } else if ((month === 8 && day >= 24) || (month === 9 && day <= 23)) {
+                return "Virgo";
+            } else if ((month === 9 && day >= 24) || (month === 10 && day <= 23)) {
+                return "Libra";
+            } else if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) {
+                return "Scorpio";
+            } else {
+                return "Sagittarius";
+            }
+        }
+        
+        function generateLifePathText(name, lifePathNumber) {
+            const lifePathTexts = {
+                1: `Dear ${name}, your Life Path number is 1, the Leader. You are destined for great achievements and independence. Your natural leadership abilities will guide you to success in your endeavors.`,
+                2: `Dear ${name}, your Life Path number is 2, the Diplomat. You have a natural ability to create harmony and bring people together. Your future holds meaningful relationships and cooperative ventures.`,
+                3: `Dear ${name}, your Life Path number is 3, the Communicator. You are blessed with creativity and self-expression. Your path will be filled with artistic pursuits and joyful experiences.`,
+                4: `Dear ${name}, your Life Path number is 4, the Builder. You possess a practical mind and strong work ethic. Your destiny involves creating stable foundations for yourself and others.`,
+                5: `Dear ${name}, your Life Path number is 5, the Freedom Seeker. You thrive on change and adventure. Your future will be filled with exciting transformations and diverse experiences.`,
+                6: `Dear ${name}, your Life Path number is 6, the Nurturer. You are destined to care for others and create harmony. Your path will lead you to responsibilities that involve family and community.`,
+                7: `Dear ${name}, your Life Path number is 7, the Seeker. You have a philosophical nature and a quest for knowledge. Your future holds deep spiritual insights and analytical pursuits.`,
+                8: `Dear ${name}, your Life Path number is 8, the Achiever. You are destined for abundance and material success. Your path will involve business acumen and manifesting prosperity.`,
+                9: `Dear ${name}, your Life Path number is 9, the Humanitarian. You have a compassionate nature and global consciousness. Your future involves serving others and making the world better.`,
+                11: `Dear ${name}, your Life Path number is 11, the Inspirational Teacher. You are a spiritual messenger with heightened intuition. Your path will involve enlightening others and receiving divine insights.`,
+                22: `Dear ${name}, your Life Path number is 22, the Master Builder. You have the potential to achieve enormous success and leave a lasting legacy. Your destiny involves turning dreams into reality.`,
+                33: `Dear ${name}, your Life Path number is 33, the Master Teacher. You are destined to uplift humanity through compassion and inspiration. Your path involves guiding others toward spiritual enlightenment.`
+            };
+            
+            return lifePathTexts[lifePathNumber] || `Dear ${name}, your unique Life Path number suggests a special destiny that is beyond conventional interpretation. Your journey will be extraordinary and unique.`;
+        }
+        
+        function generatePersonalityText(zodiacSign, name) {
+            const personalityTexts = {
+                "Aries": `As an Aries, ${name}, you are courageous, energetic, and determined. Your fiery nature drives you to take initiative and pursue your goals with passion. You thrive on challenge and are a natural leader.`,
+                "Taurus": `As a Taurus, ${name}, you are reliable, practical, and sensual. You value stability and enjoy life's pleasures. Your patient nature helps you build lasting foundations in all areas of life.`,
+                "Gemini": `As a Gemini, ${name}, you are adaptable, communicative, and intellectually curious. You have a dual nature that allows you to see multiple perspectives. Your quick wit and charm serve you well.`,
+                "Cancer": `As a Cancer, ${name}, you are intuitive, emotional, and nurturing. You have a strong connection to home and family. Your protective nature makes you a loyal friend and partner.`,
+                "Leo": `As a Leo, ${name}, you are generous, warm-hearted, and creative. You have a natural flair for drama and love being in the spotlight. Your confidence inspires others to follow your lead.`,
+                "Virgo": `As a Virgo, ${name}, you are analytical, practical, and detail-oriented. You have a keen eye for perfection and enjoy helping others. Your modesty belies your sharp intelligence.`,
+                "Libra": `As a Libra, ${name}, you are diplomatic, romantic, and sociable. You have a strong sense of justice and beauty. Your charming nature helps you create harmony in your relationships.`,
+                "Scorpio": `As a Scorpio, ${name}, you are passionate, determined, and intuitive. You have a mysterious aura that draws others to you. Your transformative nature helps you reinvent yourself throughout life.`,
+                "Sagittarius": `As a Sagittarius, ${name}, you are optimistic, freedom-loving, and humorous. You have a philosophical mind and love exploring new horizons. Your honesty is both refreshing and inspiring.`,
+                "Capricorn": `As a Capricorn, ${name}, you are responsible, disciplined, and wise. You have a strong sense of duty and ambition. Your patient approach ensures long-term success in your endeavors.`,
+                "Aquarius": `As an Aquarius, ${name}, you are progressive, original, and humanitarian. You march to the beat of your own drum and value intellectual stimulation. Your innovative ideas often ahead of their time.`,
+                "Pisces": `As a Pisces, ${name}, you are compassionate, artistic, and intuitive. You have a deep connection to the spiritual realm and great empathy for others. Your creative talents are a gift to the world.`
+            };
+            
+            return personalityTexts[zodiacSign] || `${name}, your zodiac sign suggests a unique personality blend that allows you to adapt to various situations with grace and wisdom.`;
+        }
+        
+        function generateFutureText(city, lifePathNumber, dob) {
+            const age = new Date().getFullYear() - dob.getFullYear();
+            const futureAges = [age + 1, age + 3, age + 5, age + 10];
+            const cities = [city, "London", "Dubai", "Tokyo", "New York", "Paris"];
+            const careers = ["technology", "creative arts", "business", "healthcare", "education", "entrepreneurship"];
+            const events = ["a significant career opportunity", "a meaningful relationship", "a financial windfall", "a spiritual awakening", "a transformative journey"];
+            
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            const randomCareer = careers[Math.floor(Math.random() * careers.length)];
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            
+            return `Your future holds remarkable experiences. Around age ${futureAges[0]}, you will encounter ${randomEvent} that will change your perspective. By ${futureAges[2]}, you will find success in ${randomCareer}, possibly in ${randomCity}. A major life transition around ${futureAges[3]} will lead you to your true purpose. Trust the journey, even when the path isn't clear.`;
+        }
+        
+        function generateLuckyText(name, dob, lifePathNumber) {
+            const luckyNumbers = [lifePathNumber, dob.getDate(), 7, 21, 33];
+            const colors = ["sapphire blue", "emerald green", "royal purple", "gold", "ruby red"];
+            const days = ["Monday", "Wednesday", "Friday", "Sunday"];
+            
+            const luckyColor = colors[Math.floor(Math.random() * colors.length)];
+            const luckyDay = days[Math.floor(Math.random() * days.length)];
+            
+            return `Your lucky numbers are: ${luckyNumbers[0]}, ${luckyNumbers[1]}, and ${luckyNumbers[2]}. Your aura resonates with ${luckyColor}, so incorporate this color into your life. ${luckyDay} is your most favorable day of the week for important decisions. The universe is aligning to support your dreams, ${name}.`;
+        }
+        
+        function shareResults() {
+            alert("Sharing your mystical prediction with friends...");
+            // In a real implementation, this would use the Web Share API
+        }
+        
+        function downloadResults() {
+            alert("Downloading your detailed prediction report...");
+            // In a real implementation, this would generate a PDF or image
+        }
+    </script>
+</body>
 </html>
