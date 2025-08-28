@@ -1,0 +1,337 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Life Path Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#0b0f17;--bg2:#111827;--card:#0f1624;--muted:#9aa4b2;--text:#e5e7eb;--accent:#7c3aed;--accent-2:#22d3ee;--ok:#10b981;--warn:#f59e0b;--err:#ef4444;
+      --radius:18px;--shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,Helvetica,sans-serif;color:var(--text);background:radial-gradient(1200px 800px at 15% -10%, rgba(124,58,237,.2), transparent 60%),
+      radial-gradient(1000px 600px at 110% 10%, rgba(34,211,238,.15), transparent 60%),
+      linear-gradient(180deg,var(--bg1),var(--bg2));}
+    .container{max-width:1000px;margin:0 auto;padding:28px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;border-radius:12px;background:conic-gradient(from 210deg, var(--accent), var(--accent-2));filter:drop-shadow(0 8px 18px rgba(124,58,237,.35));}
+    h1{font-size:clamp(22px,4vw,34px);margin:0;font-weight:800;letter-spacing:.3px}
+    .subtitle{color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+@media (max-width: 900px){.grid{grid-template-columns:1fr;}}
+
+.card{background:linear-gradient(180deg, rgba(15,22,36,.9), rgba(15,22,36,.7));backdrop-filter: blur(10px);border:1px solid rgba(124,58,237,.17);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card .head{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
+.card .body{padding:20px}
+
+.tag{padding:6px 10px;border-radius:999px;background:rgba(124,58,237,.16);border:1px solid rgba(124,58,237,.35);font-size:12px;color:#e9d5ff}
+
+form label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}
+input, select{width:100%;background:#0b1220;border:1px solid rgba(255,255,255,.06);color:var(--text);padding:12px 13px;border-radius:12px;outline:none;transition:.2s}
+input:focus, select:focus{border-color:rgba(124,58,237,.7);box-shadow:0 0 0 4px rgba(124,58,237,.15)}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{appearance:none;border:none;padding:12px 14px;border-radius:12px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;gap:8px;align-items:center}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#6d28d9);color:white}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.12);color:var(--text)}
+.btn:hover{transform:translateY(-1px)}
+
+.result{display:grid;gap:14px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);font-size:12px;color:var(--muted)}
+
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width: 700px){.row{grid-template-columns:1fr}}
+.tile{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);padding:14px;border-radius:14px}
+.tile h3{margin:0 0 8px;font-size:16px}
+.tile p{margin:0;color:#cbd5e1;line-height:1.55}
+
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+.kpi{border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:14px;background:rgba(255,255,255,.03)}
+.kpi .label{font-size:12px;color:var(--muted)}
+.kpi .value{font-weight:800;font-size:20px;margin-top:6px}
+.color-chip{display:inline-block;width:18px;height:18px;border-radius:6px;border:1px solid rgba(255,255,255,.3);vertical-align:middle;margin-left:8px}
+
+footer{margin-top:16px;color:var(--muted);font-size:12px;text-align:center}
+.fade{opacity:0;transform:translateY(6px);animation:fade .40s ease forwards}
+@keyframes fade{to{opacity:1;transform:none}}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>🔮 Life Path Predictor</h1>
+          <div class="subtitle">Serious numerology-based insights for Past • Present • Future</div>
+        </div>
+      </div>
+      <span class="tag">Client-side · Works via link</span>
+    </header><div class="grid">
+  <section class="card">
+    <div class="head"><strong>Enter Your Details</strong><span class="subtitle">Your data stays in your browser</span></div>
+    <div class="body">
+      <form id="form">
+        <label for="name">Full Name</label>
+        <input id="name" name="name" placeholder="e.g., Awais Aziz" required>
+
+        <label for="father">Father's Name</label>
+        <input id="father" name="father" placeholder="e.g., Aziz Muhammad" required>
+
+        <label for="dob">Date of Birth</label>
+        <input id="dob" name="dob" type="date" required>
+
+        <label for="place">Place of Birth (optional)</label>
+        <input id="place" name="place" placeholder="City, Country">
+
+        <label for="gender">Gender (optional)</label>
+        <select id="gender" name="gender">
+          <option value="">Prefer not to say</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" id="predictBtn">Predict My Life</button>
+          <button type="button" class="btn ghost" id="shareBtn">Share Link</button>
+          <button type="reset" class="btn ghost">Clear</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="head"><strong>Result</strong><span class="subtitle">Based on DOB & names</span></div>
+    <div class="body">
+      <div id="result" class="result">
+        <div class="pill">No reading yet. Fill the form and click <strong>Predict My Life</strong>.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  This tool provides reflective guidance based on numerology formulas. Not medical/financial advice.
+</footer>
+
+  </div>  <script>
+    // ---------- Utilities ----------
+    const isMaster = (n)=> [11,22,33].includes(n);
+    const digitalRoot = (n)=>{
+      while(n>9 && !isMaster(n)){
+        n = n.toString().split("").reduce((a,b)=>a+Number(b),0);
+      }
+      return n;
+    }
+    const lettersMap = (()=>{
+      const m={};
+      for(let i=0;i<26;i++){ m[String.fromCharCode(65+i)] = (i%9)+1; } // Pythagorean 1-9 cycle
+      return m;
+    })();
+    const normalize = s => (s||"").toUpperCase().replace(/[^A-Z]/g,"");
+
+    function nameNumber(str){
+      const s = normalize(str);
+      if(!s) return 0;
+      const sum = [...s].reduce((t,ch)=> t + (lettersMap[ch]||0), 0);
+      return digitalRoot(sum);
+    }
+    function lifePathFromDOB(dob){
+      // dob format yyyy-mm-dd
+      const digits = (dob||"").replace(/\D/g,"");
+      if(!digits) return 0;
+      const sum = digits.split("").reduce((a,b)=>a+Number(b),0);
+      return digitalRoot(sum);
+    }
+
+    // ---------- Knowledge Base ----------
+    const DESCRIPTIONS = {
+      numberTraits: {
+        1: "Leadership, initiative, originality. Strong will, independent choices.",
+        2: "Harmony, diplomacy, sensitivity. Values relationships and balance.",
+        3: "Creativity, expression, optimism. Communicates ideas with ease.",
+        4: "Stability, discipline, hard work. Practical and reliable foundation.",
+        5: "Change, freedom, exploration. Learns through experience and travel.",
+        6: "Responsibility, care, service. Family-oriented and supportive.",
+        7: "Analysis, depth, spirituality. Seeks truth and inner wisdom.",
+        8: "Ambition, power, results. Focus on success and material mastery.",
+        9: "Compassion, completion, vision. Humanitarian and big-picture focus.",
+        11: "Intuition, inspiration, higher vision. Sensitive and spiritually attuned.",
+        22: "Master builder, large-scale impact. Turns vision into lasting structures.",
+        33: "Master teacher, service through wisdom and love. Elevates others.",
+      },
+      presentByName: {
+        1: "Your current phase favors taking charge. Start the initiative you’ve been delaying.",
+        2: "Cooperation brings progress now. Build alliances and listen closely.",
+        3: "It’s a season for skillful communication. Share your ideas; visibility helps.",
+        4: "Process over speed. Set systems and stay consistent; results will follow.",
+        5: "Expect movement and new options. Stay adaptable; avoid impulsive commitments.",
+        6: "Prioritize health and close bonds. Organize your space and support loved ones.",
+        7: "Quiet focus is your strength. Study, reflect, and refine your plan.",
+        8: "Performance is measured. Negotiate firmly and track financial outcomes.",
+        9: "Release what’s done. Finish open loops and make room for a new chapter.",
+        11: "Your sensitivity is guidance. Document insights; a creative doorway is open.",
+        22: "Think bigger. Systematize a bold idea into practical steps others can follow.",
+        33: "Lead by serving. Mentor someone; your example compounds impact.",
+      },
+      futureByLifePath: {
+        1: "A leadership opportunity emerges within the next 12–18 months. Prepare by sharpening decision skills.",
+        2: "A partnership stabilizes your path. Nurture trust; patient diplomacy pays off.",
+        3: "Creative work gains recognition. Publish or present—audiences will resonate.",
+        4: "A steady build phase yields durable results. Commit to multi‑year structure.",
+        5: "Relocation or role change likely. Embrace the transition; growth follows movement.",
+        6: "Home and responsibilities expand. Creating supportive routines brings peace.",
+        7: "A deep study or spiritual pivot clarifies purpose. Trust the slower cadence.",
+        8: "Material gains align with disciplined strategy. Invest in scalability.",
+        9: "Completion precedes renewal. Close cycles compassionately and step into service.",
+        11: "A visionary project lights up. Protect energy; align with authentic inspiration.",
+        22: "Legacy work is possible. Architect systems that outlast you.",
+        33: "Teaching or healing influence grows widely. Integrity sustains your reach.",
+      },
+      pastByFather: {
+        1: "Early life taught initiative—often stepping up when guidance was limited.",
+        2: "Past patterns revolved around harmony‑keeping and reading emotions at home.",
+        3: "Expression was key: humor, words, or art shaped how you coped and learned.",
+        4: "Discipline and structure marked childhood—responsibility came early.",
+        5: "Frequent changes or moves built adaptability; you learned by exploring.",
+        6: "Family duties and care shaped your values; you often supported others.",
+        7: "Solitude and observation formed depth; you searched for meaning young.",
+        8: "Achievement expectations were strong; you learned to measure results.",
+        9: "Empathy grew from diverse experiences; you saw multiple sides of life.",
+        11: "Sensitivity to subtle dynamics made you perceptive; intuition began early.",
+        22: "Big expectations framed your path; you learned to think in blueprints.",
+        33: "You were looked to as a guide or helper; service became second nature.",
+      },
+      luckyColor: {
+        1: "Crimson",
+        2: "Silver",
+        3: "Saffron",
+        4: "Forest Green",
+        5: "Cyan",
+        6: "Pearl",
+        7: "Indigo",
+        8: "Charcoal",
+        9: "Gold",
+        11: "Violet",
+        22: "Royal Blue",
+        33: "Rose",
+      }
+    };
+
+    function colorForNumber(n){
+      const name = DESCRIPTIONS.luckyColor[n] || "Teal";
+      // Simple mapping to hex without library (for chip only)
+      const map = {Crimson:'#dc143c',Silver:'#c0c0c0',Saffron:'#f4c430',"Forest Green":'#228b22',Cyan:'#00ffff',Pearl:'#eae0c8',Indigo:'#4b0082',Charcoal:'#36454f',Gold:'#ffd700',Violet:'#8a2be2',"Royal Blue":'#4169e1',Rose:'#ff007f',Teal:'#2dd4bf'};
+      return {name, hex: map[name] || '#2dd4bf'};
+    }
+
+    // ---------- Prediction Engine ----------
+    function buildReading({name,father,dob,place,gender}){
+      const lifePath = lifePathFromDOB(dob);
+      const nameNum = nameNumber(name);
+      const fatherNum = nameNumber(father);
+
+      if(!lifePath || !nameNum || !fatherNum){
+        return {error:"Please provide valid Name, Father's Name and DOB."}
+      }
+
+      // Core texts
+      const past = DESCRIPTIONS.pastByFather[fatherNum] || "Your early environment seeded resilience and insight.";
+      const present = DESCRIPTIONS.presentByName[nameNum] || "Focus on clarity and consistent action right now.";
+      const future = DESCRIPTIONS.futureByLifePath[lifePath] || "A measured evolution is ahead; align habits with intent.";
+
+      // Traits & extras
+      const trait = DESCRIPTIONS.numberTraits[lifePath] || "Balanced development across domains.";
+      const lucky = lifePath; // choose lifePath as lucky anchor
+      const color = colorForNumber(lucky);
+
+      // Extra nuance from year/decade
+      const year = Number((dob||"").slice(0,4));
+      const decadeNote = !isNaN(year) ? (year<2000 ? "Foundations built before 2000 make your patience an asset today." : "Being shaped in the 21st century, your adaptability is a competitive edge.") : "";
+
+      return {lifePath,nameNum,fatherNum,trait,past,present,future,lucky,color,decadeNote}
+    }
+
+    // ---------- UI Handling ----------
+    const form = document.getElementById('form');
+    const resultEl = document.getElementById('result');
+    const shareBtn = document.getElementById('shareBtn');
+
+    function renderReading(r){
+      if(r.error){
+        resultEl.innerHTML = `<div class="pill">${r.error}</div>`;
+        return;
+      }
+      const colorChip = `<span class="color-chip" style="background:${r.color.hex}"></span>`;
+      resultEl.innerHTML = `
+        <div class="pill fade">Life Path <strong>${r.lifePath}</strong> · Name Number <strong>${r.nameNum}</strong> · Father's Influence <strong>${r.fatherNum}</strong></div>
+        <div class="tile fade">
+          <h3>Core Trait</h3>
+          <p>${r.trait}</p>
+        </div>
+        <div class="row">
+          <div class="tile fade"><h3>Past</h3><p>${r.past}</p></div>
+          <div class="tile fade"><h3>Present</h3><p>${r.present}</p></div>
+          <div class="tile fade"><h3>Future</h3><p>${r.future}</p></div>
+        </div>
+        <div class="meta">
+          <div class="kpi fade"><div class="label">Lucky Number</div><div class="value">${r.lucky}</div></div>
+          <div class="kpi fade"><div class="label">Lucky Color</div><div class="value">${r.color.name} ${colorChip}</div></div>
+        </div>
+        ${r.decadeNote ? `<div class="pill fade">${r.decadeNote}</div>` : ''}
+      `;
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = Object.fromEntries(fd.entries());
+      const reading = buildReading(payload);
+      renderReading(reading);
+    });
+
+    // Shareable URL with auto-predict
+    function setQueryFromForm(){
+      const fd = new FormData(form);
+      const params = new URLSearchParams();
+      for(const [k,v] of fd.entries()) if(v) params.set(k,v);
+      params.set('autopredict','1');
+      const url = `${location.origin}${location.pathname}?${params.toString()}`;
+      return url;
+    }
+
+    shareBtn.addEventListener('click', ()=>{
+      const url = setQueryFromForm();
+      navigator.clipboard.writeText(url).then(()=>{
+        shareBtn.textContent = 'Link copied!';
+        setTimeout(()=> shareBtn.textContent = 'Share Link', 1400);
+      }).catch(()=>{
+        prompt('Copy this link:', url);
+      })
+    });
+
+    // On load: read query and optionally auto predict
+    (function initFromQuery(){
+      const q = new URLSearchParams(location.search);
+      const prefill = ['name','father','dob','place','gender'];
+      let hasAny=false;
+      prefill.forEach(id=>{
+        if(q.has(id)){
+          const el = document.getElementById(id);
+          if(el){ el.value = q.get(id); hasAny=true; }
+        }
+      });
+      if(hasAny && q.get('autopredict')==='1'){
+        const fd = new FormData(form);
+        const payload = Object.fromEntries(fd.entries());
+        renderReading(buildReading(payload));
+      }
+    })();
+  </script></body>
+</html>
