@@ -83,6 +83,7 @@
         
         .language-options.show {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
         
         .language-option {
@@ -224,6 +225,7 @@
         .suggestions-section {
             display: none;
             margin-top: 2rem;
+            animation: fadeIn 1s ease;
         }
         
         .suggestion-card {
@@ -314,6 +316,11 @@
             0% { box-shadow: 0 0 20px var(--accent); }
             50% { box-shadow: 0 0 40px var(--accent); }
             100% { box-shadow: 0 0 20px var(--accent); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .disclaimer {
@@ -587,7 +594,7 @@
                 financeTitle: "مالی مشورہ",
                 shareText: "نتائج شیئر کریں",
                 downloadText: "ڈاؤن لوڈ کریں",
-                disclaimerText: "disclaimer: یہ ویب سائٹ صرف تفریح کے مقاصد کے لیے ہے۔ پیشین گوئیاں سائنسی طریقوں پر مبنی نہیں ہیں और उन्हें वास्तविक सलाह के रूप में नहीं लिया जाना चाहिए। مزے کریں!",
+                disclaimerText: "disclaimer: یہ ویب سائٹ صرف تفریح کے مقاصد کے لیے ہے۔ پیشین گوئیاں سائنسی طریقوں پر مبنی نہیں ہیں اور انہیں حقیقی مشورے کے طور پر نہیں لیا جانا چاہیے۔ مزے کریں!",
                 footerText: "اپنی تقدیر دریافت کریں"
             },
             sr: {
@@ -608,7 +615,7 @@
                 suggestionsTitle: "ذاتی مشورے",
                 careerTitle: "کیریئر رہنمائی",
                 relationshipsTitle: "تعلقات",
-                personalTitle: "ذاتی نشوونما",
+                personalTitle: "ذاتی نشوونma",
                 financeTitle: "مالی مشورہ",
                 shareText: "نتائج شیئر کرو",
                 downloadText: "ڈاؤن لوڈ کرو",
@@ -967,7 +974,7 @@
         }
         
         function generatePersonalityTextUR(zodiacSign, name) {
-            return `ایک ${zodiacSign} کے طور پر، ${name}, آپ کی شخصیت متحرک ہے جو دوسروں کو اپنی طرف متوجہ کرتی ہے۔ آپ کی طبیعی دلکشی اور عزم آپ کو اपنے راستے میں آنے والی رکاوٹوں پر قابو پانے میں مدد دے گی۔`;
+            return `ایک ${zodiacSign} کے طور پر، ${name}, آپ کی شخصیت متحرک ہے جو دوسروں کو اپنی طرف متوجہ کرتی ہے۔ آپ کی طبیعی دلکشی اور عزم آپ کو اپنے راستے میں آنے والی رکاوٹوں پر قابو پانے میں مدد دے گی۔`;
         }
         
         function generatePersonalityTextSR(zodiacSign, name) {
@@ -991,7 +998,7 @@
         
         function generateLuckyTextSR(name, dob, lifePathNumber) {
             const luckyNumbers = [lifePathNumber, dob.getDate(), 7, 21, 33];
-            return `تہاݙے خوش قسمت نمبر ہن: ${luckyNumbers[0]}, ${luckyNumbers[1]}, تے ${luckyNumbers[2]}۔ تہاݙی انرژی نیلے رنگ نال گونجدی ہے، ایں سانگے ایہ رنگ اپݨی زندگی وچ شامل کرو۔ جمعرات ہفتے دا سبھ توں سازگار ݙینہہ ہے وݙے فیصلے کیتے۔ کائنات تہاݙے خوابیں دی حمایت کیتے ترتیب دےندی پئی ہے، ${name}۔`;
+            return `تہاݙے خوش قسمت نمبر ہن: ${luckyNumbers[0]}, ${luckyNumbers[1]}, تے ${luckyNumbers[2]}۔ تہاݙی انرژی نیلے رنگ نال گونجدی ہے، ایں سانگے ایہ رنگ اپݨی زندگی وچ شامل کرو۔ جمعرات ہفتے دا سبھ توں سازگار ݙینہہ ہے وݙے فیصلے کیتے۔ کائنات تہaݙے خوابیں دی حمایت کیتے ترتیب دےندی پئی ہے، ${name}۔`;
         }
         
         // Placeholder functions for suggestions in other languages
@@ -1029,7 +1036,7 @@
             const careerList = document.getElementById('career-suggestions');
             careerList.innerHTML = `
                 <li><i class="fas fa-check-circle"></i> <span>قیادت دے عہدےآں تے غور کرو جتھاں تساں پہل کر سڳو</span></li>
-                <li><i class="fas fa-check-circle"></i> <span>entrepreneurship تہاݙی آزاد طبیعت دے مطابق ہوسی</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>entrepreneurship تہaݙی آزاد طبیعت دے مطابق ہوسی</span></li>
                 <li><i class="fas fa-check-circle"></i> <span>ایہجے پیشے جنہاں وچ تساں اپݨی اصلاحیت ݙکھا سڳو</span></li>
             `;
             
@@ -1037,7 +1044,7 @@
             relationshipList.innerHTML = `
                 <li><i class="fas fa-check-circle"></i> <span>تعلقات وچ جلدی بازی توں پرہیز کرو</span></li>
                 <li><i class="fas fa-check-circle"></i> <span>اپݨی انرژی پرجوش لیکن بااعتماد connections وچ لڳاؤ</span></li>
-                <li><i class="fas fa-check-circle"></i> <span>ایہجے ساتھی ڳولو جو تہاݙی آزادی دی قدر کریں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>ایہجے ساتھی ڳولو جو تہaݙی آزادی دی قدر کریں</span></li>
             `;
             
             const personalList = document.getElementById('personal-suggestions');
