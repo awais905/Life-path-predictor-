@@ -221,6 +221,53 @@
             font-size: 1.5rem;
         }
         
+        .suggestions-section {
+            display: none;
+            margin-top: 2rem;
+        }
+        
+        .suggestion-card {
+            background: linear-gradient(135deg, rgba(111, 66, 193, 0.2), rgba(26, 26, 64, 0.7));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .suggestion-card h3 {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .suggestion-card h3 i {
+            font-size: 1.3rem;
+        }
+        
+        .suggestion-list {
+            list-style-type: none;
+        }
+        
+        .suggestion-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .suggestion-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-list li i {
+            color: var(--gold);
+            margin-top: 5px;
+        }
+        
         .share-buttons {
             display: flex;
             gap: 1rem;
@@ -323,6 +370,10 @@
                 left: 50%;
                 transform: translateX(-50%);
             }
+            
+            .share-buttons {
+                flex-direction: column;
+            }
         }
         
         /* RTL support for Urdu */
@@ -338,6 +389,10 @@
             border-left: none;
             border-right: 4px solid var(--accent);
             border-radius: 8px 0 0 8px;
+        }
+        
+        [dir="rtl"] .suggestion-list li {
+            text-align: right;
         }
     </style>
 </head>
@@ -426,6 +481,39 @@
                     <p id="lucky-text">Determining your lucky factors...</p>
                 </div>
                 
+                <!-- New Suggestions Section -->
+                <div class="suggestions-section" id="suggestions-section">
+                    <h2 id="suggestionsTitle">Personalized Suggestions</h2>
+                    
+                    <div class="suggestion-card">
+                        <h3><i class="fas fa-briefcase"></i> <span id="careerTitle">Career Guidance</span></h3>
+                        <ul class="suggestion-list" id="career-suggestions">
+                            <li><i class="fas fa-check-circle"></i> <span>Calculating your career path...</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="suggestion-card">
+                        <h3><i class="fas fa-heart"></i> <span id="relationshipsTitle">Relationships</span></h3>
+                        <ul class="suggestion-list" id="relationship-suggestions">
+                            <li><i class="fas fa-check-circle"></i> <span>Analyzing your relationship patterns...</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="suggestion-card">
+                        <h3><i class="fas fa-seedling"></i> <span id="personalTitle">Personal Growth</span></h3>
+                        <ul class="suggestion-list" id="personal-suggestions">
+                            <li><i class="fas fa-check-circle"></i> <span>Preparing your personal development plan...</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="suggestion-card">
+                        <h3><i class="fas fa-dollar-sign"></i> <span id="financeTitle">Financial Advice</span></h3>
+                        <ul class="suggestion-list" id="finance-suggestions">
+                            <li><i class="fas fa-check-circle"></i> <span>Creating your financial strategy...</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
                 <div class="share-buttons">
                     <button class="share-btn" onclick="shareResults()">
                         <i class="fas fa-share-alt"></i>
@@ -467,6 +555,11 @@
                 personalityTitle: "Personality Insights",
                 futureTitle: "Future Timeline",
                 luckyTitle: "Lucky Elements",
+                suggestionsTitle: "Personalized Suggestions",
+                careerTitle: "Career Guidance",
+                relationshipsTitle: "Relationships",
+                personalTitle: "Personal Growth",
+                financeTitle: "Financial Advice",
                 shareText: "Share Results",
                 downloadText: "Download",
                 disclaimerText: "Disclaimer: This website is for entertainment purposes only. The predictions are not based on scientific methods and should not be taken as factual advice. Enjoy the fun!",
@@ -487,6 +580,11 @@
                 personalityTitle: "شخصیت کے بارے میں بصیرت",
                 futureTitle: "مستقبل کی时间لائن",
                 luckyTitle: "خوش قسمت عناصر",
+                suggestionsTitle: "ذاتی مشورے",
+                careerTitle: "کیریئر رہنمائی",
+                relationshipsTitle: "تعلقات",
+                personalTitle: "ذاتی نشوونما",
+                financeTitle: "مالی مشورہ",
                 shareText: "نتائج شیئر کریں",
                 downloadText: "ڈاؤن لوڈ کریں",
                 disclaimerText: "disclaimer: یہ ویب سائٹ صرف تفریح کے مقاصد کے لیے ہے۔ پیشین گوئیاں سائنسی طریقوں پر مبنی نہیں ہیں اور انہیں حقیقی مشورے کے طور پر نہیں لیا جانا چاہیے۔ مزے کریں!",
@@ -507,6 +605,11 @@
                 personalityTitle: "شخصیت دے بارے ڄاݨکاری",
                 futureTitle: "مستقبل دی timeلائن",
                 luckyTitle: "خوش قسمت عناصر",
+                suggestionsTitle: "ذاتی مشورے",
+                careerTitle: "کیریئر رہنمائی",
+                relationshipsTitle: "تعلقات",
+                personalTitle: "ذاتی نشوونما",
+                financeTitle: "مالی مشورہ",
                 shareText: "نتائج شیئر کرو",
                 downloadText: "ڈاؤن لوڈ کرو",
                 disclaimerText: "disclaimer: ایہ ویب سائٹ صرف تفریح کیتے ہے۔ پیشین گوئیاں سائنسی طریقے نئیں تے انہاں کوں حقیقی مشورے دے طور تے نہ گھنو۔ مزہ کرو!",
@@ -594,6 +697,7 @@
                 // Hide loading, show results
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('result-section').style.display = 'block';
+                document.getElementById('suggestions-section').style.display = 'block';
                 
                 // Scroll to results
                 document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
@@ -613,16 +717,25 @@
                 document.getElementById('personality-text').textContent = generatePersonalityText(zodiacSign, name);
                 document.getElementById('future-text').textContent = generateFutureText(city, lifePathNumber, dob);
                 document.getElementById('lucky-text').textContent = generateLuckyText(name, dob, lifePathNumber);
+                
+                // Generate suggestions
+                generateSuggestions(name, lifePathNumber, zodiacSign);
             } else if (currentLang === 'ur') {
                 document.getElementById('life-path-text').textContent = generateLifePathTextUR(name, lifePathNumber);
                 document.getElementById('personality-text').textContent = generatePersonalityTextUR(zodiacSign, name);
                 document.getElementById('future-text').textContent = generateFutureTextUR(city, lifePathNumber, dob);
                 document.getElementById('lucky-text').textContent = generateLuckyTextUR(name, dob, lifePathNumber);
+                
+                // Generate suggestions in Urdu
+                generateSuggestionsUR(name, lifePathNumber, zodiacSign);
             } else if (currentLang === 'sr') {
                 document.getElementById('life-path-text').textContent = generateLifePathTextSR(name, lifePathNumber);
                 document.getElementById('personality-text').textContent = generatePersonalityTextSR(zodiacSign, name);
                 document.getElementById('future-text').textContent = generateFutureTextSR(city, lifePathNumber, dob);
                 document.getElementById('lucky-text').textContent = generateLuckyTextSR(name, dob, lifePathNumber);
+                
+                // Generate suggestions in Saraiki
+                generateSuggestionsSR(name, lifePathNumber, zodiacSign);
             }
         }
         
@@ -744,7 +857,107 @@
             return `Your lucky numbers are: ${luckyNumbers[0]}, ${luckyNumbers[1]}, and ${luckyNumbers[2]}. Your aura resonates with ${luckyColor}, so incorporate this color into your life. ${luckyDay} is your most favorable day of the week for important decisions. The universe is aligning to support your dreams, ${name}.`;
         }
         
-        // Placeholder functions for Urdu and Saraiki predictions
+        // Suggestions generation function
+        function generateSuggestions(name, lifePathNumber, zodiacSign) {
+            // Career suggestions based on life path number
+            const careerSuggestions = {
+                1: [`Consider leadership roles where you can take initiative`, `Entrepreneurship would suit your independent nature`, ` careers allow you to showcase your originality`],
+                2: [`Look for careers in diplomacy, counseling, or mediation`, `Team environments where you can foster harmony are ideal`, `Consider fields that require cooperation and partnership`],
+                3: [`Creative fields like writing, art, or design would suit you`, ` careers allow you to express your ideas`, `Teaching or training roles would highlight your communication skills`],
+                4: [`Structured environments with clear processes work well for you`, `Consider careers in engineering, architecture, or project management`, `You excel in roles that require attention to detail and reliability`],
+                5: [` careers that offer variety and change would suit you best`, `Consider fields like travel, sales, or marketing`, `You thrive in dynamic environments that challenge you`],
+                6: [`Helping professions like teaching, healthcare, or counseling`, `Roles that allow you to nurture others would be fulfilling`, `Consider careers where you can create harmony and beauty`],
+                7: [`Research, analysis, or scientific fields would suit your mind`, `Consider careers that allow for deep study and specialization`, `You excel in roles that require intuition and insight`],
+                8: [`Business, finance, or management roles would showcase your skills`, ` careers where you can see tangible results from your efforts`, `Leadership positions in established organizations`],
+                9: [`Humanitarian work or careers that serve the greater good`, `Fields that allow you to express compassion and understanding`, `Teaching, healing, or artistic professions that inspire others`]
+            };
+            
+            // Relationship suggestions based on zodiac sign
+            const relationshipSuggestions = {
+                "Aries": [`Be mindful of impulsiveness in relationships`, `Channel your energy into passionate but respectful connections`, `Seek partners who appreciate your independence`],
+                "Taurus": [`Your loyalty is a strength - nurture it`, `Remember to embrace change even in stable relationships`, `Seek partners who appreciate your sensual nature`],
+                "Gemini": [`Your communication skills enhance relationships`, `Remember to balance social time with deep connection`, `Seek partners who stimulate you intellectually`],
+                "Cancer": [`Your nurturing nature is a gift to relationships`, `Remember to set healthy boundaries when needed`, `Seek partners who value emotional connection`],
+                "Leo": [`Your warmth and generosity enhance relationships`, `Remember to balance giving with receiving`, `Seek partners who appreciate your dramatic flair`],
+                "Virgo": [`Your attention to detail helps relationships thrive`, `Remember to embrace imperfection in yourself and others`, `Seek partners who value your practical support`],
+                "Libra": [`Your diplomatic nature helps resolve conflicts`, `Remember to make decisions that honor your needs too`, `Seek partners who appreciate beauty and harmony`],
+                "Scorpio": [`Your intensity creates deep connections`, `Remember to balance passion with peace`, `Seek partners who value emotional depth`],
+                "Sagittarius": [`Your optimism brings joy to relationships`, `Remember to balance freedom with commitment`, `Seek partners who share your love of adventure`],
+                "Capricorn": [`Your reliability creates security in relationships`, `Remember to balance work with quality time`, `Seek partners who appreciate your ambition`],
+                "Aquarius": [`Your originality makes relationships exciting`, `Remember to balance idealism with practical connection`, `Seek partners who value intellectual exchange`],
+                "Pisces": [`Your compassion creates healing in relationships`, `Remember to balance empathy with self-care`, `Seek partners who appreciate your creative spirit`]
+            };
+            
+            // Personal growth suggestions
+            const personalSuggestions = [
+                `Practice mindfulness meditation for 10 minutes daily`,
+                `Keep a journal to document your thoughts and progress`,
+                `Set clear goals and break them into achievable steps`,
+                `Read books that challenge your perspective`,
+                `Develop a regular exercise routine that you enjoy`,
+                `Learn a new skill outside your comfort zone`,
+                `Practice gratitude by noting three things you're thankful for each day`,
+                `Surround yourself with positive influences`,
+                `Take time for self-reflection regularly`
+            ];
+            
+            // Financial suggestions
+            const financialSuggestions = [
+                `Create a budget and track your expenses`,
+                `Build an emergency fund with 3-6 months of living expenses`,
+                `Educate yourself about investment options`,
+                `Diversify your income streams`,
+                `Set specific financial goals with timelines`,
+                `Avoid impulsive spending by implementing a waiting period for purchases`,
+                `Consider consulting with a financial advisor`,
+                `Regularly review and adjust your financial plan`,
+                `Invest in your education and skills development`
+            ];
+            
+            // Select random suggestions for each category
+            const selectedCareer = careerSuggestions[lifePathNumber] || careerSuggestions[1];
+            const selectedRelationship = relationshipSuggestions[zodiacSign] || relationshipSuggestions["Aries"];
+            
+            // Update career suggestions
+            const careerList = document.getElementById('career-suggestions');
+            careerList.innerHTML = '';
+            selectedCareer.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle"></i> <span>${suggestion}</span>`;
+                careerList.appendChild(li);
+            });
+            
+            // Update relationship suggestions
+            const relationshipList = document.getElementById('relationship-suggestions');
+            relationshipList.innerHTML = '';
+            selectedRelationship.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle"></i> <span>${suggestion}</span>`;
+                relationshipList.appendChild(li);
+            });
+            
+            // Update personal growth suggestions (select 3 random ones)
+            const personalList = document.getElementById('personal-suggestions');
+            personalList.innerHTML = '';
+            const personalSelection = [...personalSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
+            personalSelection.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle"></i> <span>${suggestion}</span>`;
+                personalList.appendChild(li);
+            });
+            
+            // Update financial suggestions (select 3 random ones)
+            const financeList = document.getElementById('finance-suggestions');
+            financeList.innerHTML = '';
+            const financeSelection = [...financialSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
+            financeSelection.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle"></i> <span>${suggestion}</span>`;
+                financeList.appendChild(li);
+            });
+        }
+        
+        // Placeholder functions for other languages
         function generateLifePathTextUR(name, lifePathNumber) {
             return `عزیز ${name}, آپ کی زندگی کا راستہ نمبر ${lifePathNumber} ہے۔ آپ کی قسمت میں بڑی کامیابیاں ہیں اور آپ ایک روشن مستقبل کے حامل ہیں۔ آپ کی قیادت کی صلاحیتیں آپ کو کامیابی کی طرف لے جائیں گی۔`;
         }
@@ -779,6 +992,67 @@
         function generateLuckyTextSR(name, dob, lifePathNumber) {
             const luckyNumbers = [lifePathNumber, dob.getDate(), 7, 21, 33];
             return `تہاݙے خوش قسمت نمبر ہن: ${luckyNumbers[0]}, ${luckyNumbers[1]}, تے ${luckyNumbers[2]}۔ تہاݙی انرژی نیلے رنگ نال گونجدی ہے، ایں سانگے ایہ رنگ اپݨی زندگی وچ شامل کرو۔ جمعرات ہفتے دا سبھ توں سازگار ݙینہہ ہے وݙے فیصلے کیتے۔ کائنات تہاݙے خوابیں دی حمایت کیتے ترتیب دےندی پئی ہے، ${name}۔`;
+        }
+        
+        // Placeholder functions for suggestions in other languages
+        function generateSuggestionsUR(name, lifePathNumber, zodiacSign) {
+            const careerList = document.getElementById('career-suggestions');
+            careerList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>قیادت کے عہدوں پر غور کریں جہاں آپ پہل کر سکیں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>entrepreneurship آپ کی آزاد طبیعت کے مطابق ہوگا</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>ایسی پیشے جن میں آپ اپنی اصلاحیت دکھا سکیں</span></li>
+            `;
+            
+            const relationshipList = document.getElementById('relationship-suggestions');
+            relationshipList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>تعلقات میں جلد بازی سے پرہیز کریں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>اپنی توانائی پرجوش لیکن بااعتماد connections میں لگائیں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>ایسے ساتھی تلاش کریں جو آپ کی آزادی کی قدر کریں</span></li>
+            `;
+            
+            const personalList = document.getElementById('personal-suggestions');
+            personalList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>روزانہ 10 منٹ mindfulness meditation کی مشق کریں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>اپنے خیالات اور ترقی کو document کرنے کے لیے ایک journal رکھیں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>clear goals مقرر کریں اور انہیں حاصل کرنے کے steps میں تقسیم کریں</span></li>
+            `;
+            
+            const financeList = document.getElementById('finance-suggestions');
+            financeList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>ایک budget بنائیں اور اپنے expenses کو track کریں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>3-6 ماہ کے living expenses کے ساتھ emergency fund بنائیں</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>investment options کے بارے میں خود کو educate کریں</span></li>
+            `;
+        }
+        
+        function generateSuggestionsSR(name, lifePathNumber, zodiacSign) {
+            const careerList = document.getElementById('career-suggestions');
+            careerList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>قیادت دے عہدےآں تے غور کرو جتھاں تساں پہل کر سڳو</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>entrepreneurship تہاݙی آزاد طبیعت دے مطابق ہوسی</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>ایہجے پیشے جنہاں وچ تساں اپݨی اصلاحیت ݙکھا سڳو</span></li>
+            `;
+            
+            const relationshipList = document.getElementById('relationship-suggestions');
+            relationshipList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>تعلقات وچ جلدی بازی توں پرہیز کرو</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>اپݨی انرژی پرجوش لیکن بااعتماد connections وچ لڳاؤ</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>ایہجے ساتھی ڳولو جو تہاݙی آزادی دی قدر کریں</span></li>
+            `;
+            
+            const personalList = document.getElementById('personal-suggestions');
+            personalList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>روزانہ 10 منٹ mindfulness meditation دی practice کرو</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>اپݨے خیالات تے ترقی کوں document کرݨ کیتے ہک journal رکھو</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>clear goals مقرر کرو تے انہاں کوں حاصل کرݨ دے steps وچ تقسیم کرو</span></li>
+            `;
+            
+            const financeList = document.getElementById('finance-suggestions');
+            financeList.innerHTML = `
+                <li><i class="fas fa-check-circle"></i> <span>ہک budget بݨاؤ تے اپݨے expenses کوں track کرو</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>3-6 مہینے دے living expenses دے نال emergency fund بݨاؤ</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>investment options دے بارے وچ خود کو educate کرو</span></li>
+            `;
         }
         
         function shareResults() {
